@@ -1,0 +1,174 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+      Raven dark theme: colours from desktop/design/tokens.json ("color", "dark" values).
+      Written by hand from the tokens; keep in sync (ThemeTokensTests compares every value).
+      tokens.json uses CSS #RRGGBBAA; XAML uses #AARRGGBB.
+    -->
+
+    <Color x:Key="RavenBackgroundColor">#FF1C1C1A</Color>
+    <Color x:Key="RavenSurfaceColor">#FF262624</Color>
+    <Color x:Key="RavenSurfaceMutedColor">#FF2C2C2A</Color>
+    <Color x:Key="RavenTextPrimaryColor">#FFECEBE6</Color>
+    <Color x:Key="RavenTextSecondaryColor">#FFA3A29B</Color>
+    <Color x:Key="RavenBorderColor">#17ECEBE6</Color>
+    <Color x:Key="RavenBorderStrongColor">#2EECEBE6</Color>
+    <Color x:Key="RavenAccentColor">#FF85B7EB</Color>
+    <Color x:Key="RavenAccentFillColor">#FF378ADD</Color>
+    <Color x:Key="RavenOnAccentColor">#FFFFFFFF</Color>
+    <Color x:Key="RavenAccentSoftColor">#FF0C447C</Color>
+    <Color x:Key="RavenSuccessColor">#FF97C459</Color>
+    <Color x:Key="RavenWarningColor">#FFEF9F27</Color>
+    <Color x:Key="RavenDangerColor">#FFF09595</Color>
+    <Color x:Key="RavenPresenceInTouchColor">#FF5FBF6B</Color>
+    <Color x:Key="RavenPresenceWaitingColor">#FFEF9F27</Color>
+    <Color x:Key="RavenPresenceNoneColor">#FF888780</Color>
+    <!-- Calm (tokens.json version 2) -->
+    <Color x:Key="RavenSidebarColor">#FF222220</Color>
+    <Color x:Key="RavenTextTertiaryColor">#FF85847E</Color>
+    <Color x:Key="RavenAccentFillTopColor">#FF4F9AE6</Color>
+    <Color x:Key="RavenFocusColor">#FF85B7EB</Color>
+    <Color x:Key="RavenSuccessFillColor">#FF5FBF6B</Color>
+    <Color x:Key="RavenWarningFillColor">#FFEF9F27</Color>
+    <Color x:Key="RavenWarningSoftColor">#FF3A2A12</Color>
+    <Color x:Key="RavenDangerFillColor">#FFC93C3C</Color>
+    <Color x:Key="RavenPathLanColor">#FF6FA8F0</Color>
+    <Color x:Key="RavenPathNearbyColor">#FF9C9CF5</Color>
+    <Color x:Key="RavenPathTorColor">#FFC59AF0</Color>
+    <Color x:Key="RavenPathDirectColor">#FF4CC3B8</Color>
+    <Color x:Key="RavenPathRelayColor">#FFA2AEBD</Color>
+    <Color x:Key="RavenPathFriendColor">#FFEFB451</Color>
+    <Color x:Key="RavenSectionGeneralColor">#FF7C7B75</Color>
+    <Color x:Key="RavenSectionAppearanceColor">#FF5B5BD6</Color>
+    <Color x:Key="RavenSectionPrivacyColor">#FF12827A</Color>
+    <Color x:Key="RavenSectionLockColor">#FFB7791F</Color>
+    <Color x:Key="RavenSectionNetworkColor">#FF2F6FDC</Color>
+    <Color x:Key="RavenSectionUpdatesColor">#FF8E4EC6</Color>
+    <Color x:Key="RavenSectionAboutColor">#FF6B6A65</Color>
+    <Color x:Key="RavenAvatar0BackgroundColor">#FF3C3489</Color>
+    <Color x:Key="RavenAvatar0ForegroundColor">#FFCECBF6</Color>
+    <Color x:Key="RavenAvatar1BackgroundColor">#FF085041</Color>
+    <Color x:Key="RavenAvatar1ForegroundColor">#FF9FE1CB</Color>
+    <Color x:Key="RavenAvatar2BackgroundColor">#FF712B13</Color>
+    <Color x:Key="RavenAvatar2ForegroundColor">#FFF5C4B3</Color>
+    <Color x:Key="RavenAvatar3BackgroundColor">#FF72243E</Color>
+    <Color x:Key="RavenAvatar3ForegroundColor">#FFF4C0D1</Color>
+    <Color x:Key="RavenAvatar4BackgroundColor">#FF0C447C</Color>
+    <Color x:Key="RavenAvatar4ForegroundColor">#FFB5D4F4</Color>
+
+    <SolidColorBrush x:Key="RavenBackgroundBrush" Color="{StaticResource RavenBackgroundColor}" />
+    <SolidColorBrush x:Key="RavenSurfaceBrush" Color="{StaticResource RavenSurfaceColor}" />
+    <SolidColorBrush x:Key="RavenSurfaceMutedBrush" Color="{StaticResource RavenSurfaceMutedColor}" />
+    <SolidColorBrush x:Key="RavenTextPrimaryBrush" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="RavenTextSecondaryBrush" Color="{StaticResource RavenTextSecondaryColor}" />
+    <SolidColorBrush x:Key="RavenBorderBrush" Color="{StaticResource RavenBorderColor}" />
+    <SolidColorBrush x:Key="RavenBorderStrongBrush" Color="{StaticResource RavenBorderStrongColor}" />
+    <SolidColorBrush x:Key="RavenAccentBrush" Color="{StaticResource RavenAccentColor}" />
+    <SolidColorBrush x:Key="RavenAccentFillBrush" Color="{StaticResource RavenAccentFillColor}" />
+    <SolidColorBrush x:Key="RavenOnAccentBrush" Color="{StaticResource RavenOnAccentColor}" />
+    <SolidColorBrush x:Key="RavenAccentSoftBrush" Color="{StaticResource RavenAccentSoftColor}" />
+    <SolidColorBrush x:Key="RavenSuccessBrush" Color="{StaticResource RavenSuccessColor}" />
+    <SolidColorBrush x:Key="RavenWarningBrush" Color="{StaticResource RavenWarningColor}" />
+    <SolidColorBrush x:Key="RavenDangerBrush" Color="{StaticResource RavenDangerColor}" />
+    <SolidColorBrush x:Key="RavenPresenceInTouchBrush" Color="{StaticResource RavenPresenceInTouchColor}" />
+    <SolidColorBrush x:Key="RavenPresenceWaitingBrush" Color="{StaticResource RavenPresenceWaitingColor}" />
+    <SolidColorBrush x:Key="RavenPresenceNoneBrush" Color="{StaticResource RavenPresenceNoneColor}" />
+    <SolidColorBrush x:Key="RavenSidebarBrush" Color="{StaticResource RavenSidebarColor}" />
+    <SolidColorBrush x:Key="RavenTextTertiaryBrush" Color="{StaticResource RavenTextTertiaryColor}" />
+    <SolidColorBrush x:Key="RavenAccentFillTopBrush" Color="{StaticResource RavenAccentFillTopColor}" />
+    <SolidColorBrush x:Key="RavenFocusBrush" Color="{StaticResource RavenFocusColor}" />
+    <SolidColorBrush x:Key="RavenSuccessFillBrush" Color="{StaticResource RavenSuccessFillColor}" />
+    <SolidColorBrush x:Key="RavenWarningFillBrush" Color="{StaticResource RavenWarningFillColor}" />
+    <SolidColorBrush x:Key="RavenWarningSoftBrush" Color="{StaticResource RavenWarningSoftColor}" />
+    <SolidColorBrush x:Key="RavenDangerFillBrush" Color="{StaticResource RavenDangerFillColor}" />
+    <SolidColorBrush x:Key="RavenPathLanBrush" Color="{StaticResource RavenPathLanColor}" />
+    <SolidColorBrush x:Key="RavenPathNearbyBrush" Color="{StaticResource RavenPathNearbyColor}" />
+    <SolidColorBrush x:Key="RavenPathTorBrush" Color="{StaticResource RavenPathTorColor}" />
+    <SolidColorBrush x:Key="RavenPathDirectBrush" Color="{StaticResource RavenPathDirectColor}" />
+    <SolidColorBrush x:Key="RavenPathRelayBrush" Color="{StaticResource RavenPathRelayColor}" />
+    <SolidColorBrush x:Key="RavenPathFriendBrush" Color="{StaticResource RavenPathFriendColor}" />
+    <SolidColorBrush x:Key="RavenSectionGeneralBrush" Color="{StaticResource RavenSectionGeneralColor}" />
+    <SolidColorBrush x:Key="RavenSectionAppearanceBrush" Color="{StaticResource RavenSectionAppearanceColor}" />
+    <SolidColorBrush x:Key="RavenSectionPrivacyBrush" Color="{StaticResource RavenSectionPrivacyColor}" />
+    <SolidColorBrush x:Key="RavenSectionLockBrush" Color="{StaticResource RavenSectionLockColor}" />
+    <SolidColorBrush x:Key="RavenSectionNetworkBrush" Color="{StaticResource RavenSectionNetworkColor}" />
+    <SolidColorBrush x:Key="RavenSectionUpdatesBrush" Color="{StaticResource RavenSectionUpdatesColor}" />
+    <SolidColorBrush x:Key="RavenSectionAboutBrush" Color="{StaticResource RavenSectionAboutColor}" />
+    <SolidColorBrush x:Key="RavenAvatar0BackgroundBrush" Color="{StaticResource RavenAvatar0BackgroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar0ForegroundBrush" Color="{StaticResource RavenAvatar0ForegroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar1BackgroundBrush" Color="{StaticResource RavenAvatar1BackgroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar1ForegroundBrush" Color="{StaticResource RavenAvatar1ForegroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar2BackgroundBrush" Color="{StaticResource RavenAvatar2BackgroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar2ForegroundBrush" Color="{StaticResource RavenAvatar2ForegroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar3BackgroundBrush" Color="{StaticResource RavenAvatar3BackgroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar3ForegroundBrush" Color="{StaticResource RavenAvatar3ForegroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar4BackgroundBrush" Color="{StaticResource RavenAvatar4BackgroundColor}" />
+    <SolidColorBrush x:Key="RavenAvatar4ForegroundBrush" Color="{StaticResource RavenAvatar4ForegroundColor}" />
+
+    <!-- Calm: tints, the outgoing bubble, the sidebar pane (DESIGN.md "Calm"); made from the colours above,
+         not tokens of their own. Every key here has a high-contrast twin in Raven.xaml. -->
+    <SolidColorBrush x:Key="RavenPathLanSoftBrush" Opacity="0.11" Color="{StaticResource RavenPathLanColor}" />
+    <SolidColorBrush x:Key="RavenPathNearbySoftBrush" Opacity="0.11" Color="{StaticResource RavenPathNearbyColor}" />
+    <SolidColorBrush x:Key="RavenPathTorSoftBrush" Opacity="0.11" Color="{StaticResource RavenPathTorColor}" />
+    <SolidColorBrush x:Key="RavenPathDirectSoftBrush" Opacity="0.11" Color="{StaticResource RavenPathDirectColor}" />
+    <SolidColorBrush x:Key="RavenPathRelaySoftBrush" Opacity="0.11" Color="{StaticResource RavenPathRelayColor}" />
+    <SolidColorBrush x:Key="RavenPathFriendSoftBrush" Opacity="0.11" Color="{StaticResource RavenPathFriendColor}" />
+    <SolidColorBrush x:Key="RavenNeutralSoftBrush" Opacity="0.07" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="RavenHoverBrush" Opacity="0.05" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="RavenSuccessSoftBrush" Opacity="0.13" Color="{StaticResource RavenSuccessFillColor}" />
+    <SolidColorBrush x:Key="RavenDangerSoftBrush" Opacity="0.12" Color="{StaticResource RavenDangerFillColor}" />
+    <SolidColorBrush x:Key="RavenWarningLineBrush" Opacity="0.35" Color="{StaticResource RavenWarningFillColor}" />
+    <SolidColorBrush x:Key="RavenFocusRingBrush" Opacity="0.45" Color="{StaticResource RavenAccentFillColor}" />
+    <SolidColorBrush x:Key="RavenIncomingRingBrush" Opacity="0.35" Color="{StaticResource RavenAccentFillColor}" />
+    <SolidColorBrush x:Key="RavenSwitchOffBrush" Opacity="0.28" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="RavenKnobBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="RavenSidebarPaneBrush" Opacity="0.72" Color="{StaticResource RavenSidebarColor}" />
+    <LinearGradientBrush x:Key="RavenBubbleOutBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="{StaticResource RavenAccentFillTopColor}" />
+        <GradientStop Offset="1" Color="{StaticResource RavenAccentFillColor}" />
+    </LinearGradientBrush>
+
+    <!-- Lightweight styling of the NavigationView (the sidebar): Calm rows, no Fluent selection pill. -->
+    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Opacity="0.72" Color="{StaticResource RavenSidebarColor}" />
+    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Opacity="0.72" Color="{StaticResource RavenSidebarColor}" />
+    <SolidColorBrush x:Key="NavigationViewContentBackground" Color="{StaticResource RavenBackgroundColor}" />
+    <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="{StaticResource RavenBorderColor}" />
+    <Thickness x:Key="NavigationViewContentGridBorderThickness">1,0,0,0</Thickness>
+    <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{StaticResource RavenSurfaceColor}" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{StaticResource RavenSurfaceColor}" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="{StaticResource RavenSurfaceColor}" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Opacity="0.05" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Opacity="0.08" Color="{StaticResource RavenTextPrimaryColor}" />
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="Transparent" />
+
+    <!-- Fluent accent resources pointed at Raven's accent (accentFill for fills, accent for text). -->
+    <Color x:Key="SystemAccentColor">#FF378ADD</Color>
+    <Color x:Key="SystemAccentColorLight1">#FF378ADD</Color>
+    <Color x:Key="SystemAccentColorLight2">#FF378ADD</Color>
+    <Color x:Key="SystemAccentColorLight3">#FF85B7EB</Color>
+    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{StaticResource RavenAccentFillColor}" />
+    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{StaticResource RavenAccentFillColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{StaticResource RavenAccentFillColor}" Opacity="0.8" />
+    <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{StaticResource RavenAccentColor}" />
+    <SolidColorBrush x:Key="AccentTextFillColorSecondaryBrush" Color="{StaticResource RavenAccentColor}" />
+    <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{StaticResource RavenAccentColor}" />
+    <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{StaticResource RavenOnAccentColor}" />
+    <SolidColorBrush x:Key="TextOnAccentFillColorSecondaryBrush" Color="{StaticResource RavenOnAccentColor}" Opacity="0.7" />
+    <!-- Lightweight styling: accent buttons (Raven's accent) and switches (successFill when on, tokens.json color.usage). -->
+    <SolidColorBrush x:Key="AccentButtonBackground" Color="{StaticResource RavenAccentFillColor}" />
+    <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="{StaticResource RavenAccentFillColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="{StaticResource RavenAccentFillColor}" Opacity="0.8" />
+    <SolidColorBrush x:Key="AccentButtonForeground" Color="{StaticResource RavenOnAccentColor}" />
+    <SolidColorBrush x:Key="AccentButtonForegroundPointerOver" Color="{StaticResource RavenOnAccentColor}" />
+    <SolidColorBrush x:Key="AccentButtonForegroundPressed" Color="{StaticResource RavenOnAccentColor}" Opacity="0.8" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{StaticResource RavenSuccessFillColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{StaticResource RavenSuccessFillColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{StaticResource RavenSuccessFillColor}" Opacity="0.8" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOn" Color="{StaticResource RavenSuccessFillColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver" Color="{StaticResource RavenSuccessFillColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed" Color="{StaticResource RavenSuccessFillColor}" />
+
+</ResourceDictionary>

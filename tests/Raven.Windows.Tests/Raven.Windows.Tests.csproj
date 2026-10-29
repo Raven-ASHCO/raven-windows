@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Unit tests for Raven.Windows.Core (MockRaven, security-word checks, string keys, the
+    sanitiser, the JSON envelope, theme tokens). Plain net8.0: runs on any OS with the
+    .NET 8 SDK. MockRaven tests need a Debug build (the mock is compiled only in Debug).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>Raven.Windows.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Versions are pinned in desktop/windows/Directory.Packages.props. -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Raven.Windows.Core\Raven.Windows.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    EngineTests call the real raven_client.dll on a throwaway profile with the file-backed
+    secret stores, which only a debug build of the engine accepts (release builds refuse them):
+    build it in core/node/ with `cargo build -p raven-client`, and it is copied next to the tests.
+    Without it the engine tests are skipped (inconclusive), or fail when
+    RAVEN_REQUIRE_ENGINE_TESTS=1 (CI). Another folder: -p:RavenEngineTestDir=<folder>\
+  -->
+  <PropertyGroup>
+    <RavenEngineTestDir Condition="'$(RavenEngineTestDir)' == ''">$(MSBuildThisFileDirectory)..\..\core\node\target\debug\</RavenEngineTestDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="$(RavenEngineTestDir)raven_client.dll" Link="raven_client.dll" Condition="Exists('$(RavenEngineTestDir)raven_client.dll')" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
+</Project>

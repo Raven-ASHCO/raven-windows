@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.NetworkCheckPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!-- Check network (network.check): raven doctor's summary, its network lines, the router on request. -->
+    <ScrollViewer Background="{ThemeResource RavenBackgroundBrush}" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="760" Padding="24" HorizontalAlignment="Left" Spacing="16">
+            <HyperlinkButton
+                x:Name="BackLink"
+                Padding="0,2,0,2"
+                Click="OnBackClick"
+                Content="{h:Str Key=network.check.back}"
+                AutomationProperties.Name="{h:Str Key=network.check.back}" />
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=network.check.title}" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="6">
+                    <ProgressRing
+                        x:Name="BusyRing"
+                        Width="16"
+                        Height="16"
+                        IsActive="False"
+                        Visibility="Collapsed"
+                        AutomationProperties.Name="{h:Str Key=network.check.running}" />
+                    <TextBlock x:Name="BusyText" VerticalAlignment="Center" Style="{StaticResource RavenSmallTextStyle}" />
+                </StackPanel>
+                <Button
+                    x:Name="AgainButton"
+                    Grid.Column="2"
+                    Click="OnAgainClick"
+                    Content="{h:Str Key=network.check.again}"
+                    AutomationProperties.Name="{h:Str Key=network.check.again}" />
+            </Grid>
+
+            <InfoBar x:Name="ErrorBar" IsClosable="True" IsOpen="False" />
+
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.check.summary}" />
+                    <StackPanel x:Name="SummaryPanel" Spacing="2" />
+                    <TextBlock x:Name="NextStepText" Style="{StaticResource RavenBodyTextStyle}" FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.check.lines}" />
+                    <StackPanel x:Name="LinesPanel" Spacing="8" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.check.router.title}" />
+                    <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=network.check.router.body}" />
+                    <Button
+                        x:Name="RouterButton"
+                        Click="OnRouterClick"
+                        Content="{h:Str Key=network.check.router}"
+                        AutomationProperties.Name="{h:Str Key=network.check.router}" />
+                    <StackPanel x:Name="RouterPanel" Spacing="8" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

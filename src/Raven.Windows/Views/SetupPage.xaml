@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.SetupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <ScrollViewer Background="{ThemeResource RavenBackgroundBrush}" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24">
+            <Border MaxWidth="680" Padding="34,26,34,26" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="{StaticResource RavenSheetRadius}" Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="12">
+                    <!-- Your name, Receive messages, Your identity, Security words (Controls/StepsBar.cs). -->
+                    <ContentControl x:Name="StepsHost" HorizontalContentAlignment="Stretch" IsTabStop="False" />
+
+                    <!-- 1. Name (optional, only on this computer) -->
+                    <StackPanel x:Name="NameStep" Spacing="12">
+                        <TextBlock Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=setup.name.title}" />
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=setup.name.body}" />
+                        <TextBox x:Name="NameBox" MaxLength="64" KeyDown="OnNameKeyDown" PlaceholderText="{h:Str Key=setup.name.placeholder}" />
+                        <Button HorizontalAlignment="Left" Click="OnNameNext" Content="{h:Str Key=common.continue}" Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
+
+                    <!-- 2. Receive messages? (with the Windows firewall sentence) -->
+                    <StackPanel x:Name="ReceiveStep" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=setup.receive.title}" />
+                        <TextBlock Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=setup.receive.body}" />
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=setup.receive.windows}" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button x:Name="ReceiveYes" Click="OnReceiveYes" Content="{h:Str Key=setup.receive.yes}" Style="{StaticResource AccentButtonStyle}" />
+                            <Button Click="OnReceiveNo" Content="{h:Str Key=setup.receive.no}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- 3. Creating the identity (a real wait: the engine makes the key) -->
+                    <StackPanel x:Name="CreatingStep" Spacing="12" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <ProgressRing x:Name="CreatingRing" Width="20" Height="20" IsActive="False" />
+                            <TextBlock Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=setup.creating}" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=setup.creating.body}" />
+                    </StackPanel>
+
+                    <!-- 4. Your security words -->
+                    <StackPanel x:Name="WordsStep" Spacing="12" Visibility="Collapsed">
+                        <TextBlock Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=words.title}" />
+                        <TextBlock Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=words.body}" />
+                        <ContentControl x:Name="WordsHost" HorizontalContentAlignment="Stretch" IsTabStop="False" />
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=words.check}" />
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=words.never}" />
+                        <TextBlock x:Name="OldCode" Style="{StaticResource RavenMonoTextStyle}" />
+                        <Button x:Name="DoneButton" HorizontalAlignment="Left" Click="OnDone" Content="{h:Str Key=common.done}" Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
+
+                    <InfoBar x:Name="ErrorBar" IsClosable="True" IsOpen="False" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

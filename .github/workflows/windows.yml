@@ -1,0 +1,182 @@
+# Raven for Windows (WinUI 3): build Raven's engine (core/node/crates/raven-client, from the
+# raven-core submodule at core/) and the background program (raven-node), build the app with
+# them, run the unit tests and the engine tests (EngineTests: the real raven_client.dll on a
+# throwaway profile).
+# The submodule is fetched with RAVEN_CORE_TOKEN (a read-only token for raven-core) when that
+# secret exists, else with the workflow's own token (enough once raven-core is public).
+# The app uses the engine in every build; MockRaven exists only in Debug builds and only runs
+# when started with --demo (or --mock-ready / --mock-locked).
+name: Desktop Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# Least privilege; third-party actions pinned to full commit SHAs (the comment names the
+# release), as in the other workflows.
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUST_TOOLCHAIN: "1.98.0"
+  CARGO_TERM_COLOR: always
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+
+jobs:
+  build-and-test:
+    name: Engine, app (x64) and tests
+    runs-on: windows-latest
+    timeout-minutes: 75
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          token: ${{ secrets.RAVEN_CORE_TOKEN || github.token }}
+
+      # As in the node workflow (raven-serverless.yml, rust-windows): the engine's build hashes
+      # the vendored SQLite amalgamation byte for byte, so a CRLF checkout breaks it.
+      - name: Byte-pinned inputs are LF in this checkout (core.autocrlf guard)
+        shell: bash
+        working-directory: ${{ github.workspace }}/core
+        run: |
+          set -euo pipefail
+          bad="$(git ls-files --eol -- node/third_party protocol shared-vectors \
+            | awk '$1 == "i/lf" && $2 != "w/lf" && $2 != "w/none"' || true)"
+          if [[ -n "$bad" ]]; then
+            echo "files that are LF in the index but not LF in the working tree (check .gitattributes / core.autocrlf):" >&2
+            echo "$bad" | head -n 20 >&2
+            exit 1
+          fi
+          echo "byte-pinned paths are LF in the working tree"
+
+      - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: core/node
+          prefix-key: desktop-windows-engine
+
+      # Release: raven_client.dll and raven-node.exe for the app (Raven.Windows.csproj copies
+      # them next to Raven.exe). Debug: raven_client.dll for EngineTests, because only debug
+      # engine builds accept the file-backed secret stores the tests use.
+      - name: Build the engine and raven-node
+        shell: bash
+        working-directory: core/node
+        run: |
+          set -euo pipefail
+          cargo build --locked --release -p raven-client -p raven-node
+          cargo build --locked -p raven-client
+          ls -l target/release/raven_client.dll target/release/raven-node.exe target/debug/raven_client.dll
+
+      # The library the app ships, on its own: app.info and profile.state of an empty profile
+      # (the platform secret store, DPAPI, on a throwaway folder; nothing is created), then the
+      # refusal of the file-backed test stores that only debug engine builds accept (API.md,
+      # "Profile and raven-node"; the backend variable is read on each identity load).
+      - name: Smoke the release engine library
+        run: |
+          $dll = (Resolve-Path core/node/target/release/raven_client.dll).Path
+          $source = @"
+          using System;
+          using System.Runtime.InteropServices;
+          public static class RavenReleaseSmoke
+          {
+              [DllImport(@"$dll", CallingConvention = CallingConvention.Cdecl)]
+              private static extern IntPtr raven_call([MarshalAs(UnmanagedType.LPUTF8Str)] string request);
+              [DllImport(@"$dll", CallingConvention = CallingConvention.Cdecl)]
+              private static extern void raven_free(IntPtr response);
+              public static string Call(string request)
+              {
+                  IntPtr p = raven_call(request);
+                  try { return Marshal.PtrToStringUTF8(p); } finally { raven_free(p); }
+              }
+          }
+          "@
+          Add-Type -TypeDefinition $source
+          $env:RAVEN_DATA_DIR = Join-Path $env:RUNNER_TEMP "raven-release-smoke\profile"
+          $info = [RavenReleaseSmoke]::Call('{"v":1,"op":"app.info","args":{}}') | ConvertFrom-Json
+          $state = [RavenReleaseSmoke]::Call('{"v":1,"op":"profile.state","args":{}}') | ConvertFrom-Json
+          $bad = [RavenReleaseSmoke]::Call('{"v":1,"op":"no.such.op","args":{}}') | ConvertFrom-Json
+          "app.info: $($info | ConvertTo-Json -Compress -Depth 5)"
+          "profile.state: $($state | ConvertTo-Json -Compress -Depth 5)"
+          if (-not $info.ok -or $info.result.build -ne "release" -or $info.result.platform -ne "windows") { throw "app.info is not a release engine on Windows" }
+          if (-not $state.ok -or $state.result.state -ne "new") { throw "profile.state of an empty profile is not new" }
+          if ($bad.ok -or $bad.error.code -ne "BAD_REQUEST") { throw "an unknown op is not BAD_REQUEST" }
+          $env:RAVEN_IDENTITY_BACKEND = "locked-file"
+          $refused = [RavenReleaseSmoke]::Call('{"v":1,"op":"profile.state","args":{}}') | ConvertFrom-Json
+          "profile.state with locked-file: $($refused | ConvertTo-Json -Compress -Depth 5)"
+          if (-not $refused.ok -or $refused.result.state -ne "unreadable" -or -not "$($refused.result.detail)".Contains("forbidden in Release builds")) {
+            throw "the release engine did not refuse the file-backed identity store"
+          }
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: .NET info
+        run: dotnet --info
+
+      - name: Restore
+        run: dotnet restore Raven.Windows.sln -p:Platform=x64
+
+      - name: Build (Debug, x64)
+        run: dotnet build Raven.Windows.sln --no-restore -c Debug -p:Platform=x64
+
+      # RAVEN_REQUIRE_ENGINE_TESTS: EngineTests fail instead of being skipped when the
+      # engine library is missing next to the tests.
+      - name: Test (Debug, with the engine)
+        env:
+          RAVEN_REQUIRE_ENGINE_TESTS: "1"
+        run: dotnet test tests/Raven.Windows.Tests/Raven.Windows.Tests.csproj -c Debug --logger "trx;LogFileName=raven-windows-tests.trx" --results-directory TestResults
+
+      - name: Build (Release, x64)
+        run: dotnet build Raven.Windows.sln -c Release -p:Platform=x64
+
+      # The Release app carries the engine next to Raven.exe and not the mock: the namespace
+      # of MockRaven appears in the Debug core library and nowhere in the Release one.
+      - name: Release app has the engine, not the mock
+        run: |
+          $exe = Get-ChildItem -Recurse -File -Path src/Raven.Windows/bin/x64/Release -Filter Raven.exe | Select-Object -First 1
+          if ($null -eq $exe) { throw "Raven.exe not found under src/Raven.Windows/bin/x64/Release" }
+          $out = $exe.DirectoryName
+          foreach ($f in @("raven_client.dll", "raven-node.exe", "Raven.Windows.Core.dll")) {
+            if (-not (Test-Path (Join-Path $out $f))) { throw "$f is missing next to Raven.exe ($out)" }
+            "ok $f next to $($exe.FullName)"
+          }
+          $marker = "Raven.Windows.Core.Mock"
+          function Test-Marker([string]$path) {
+            $text = [System.Text.Encoding]::Latin1.GetString([System.IO.File]::ReadAllBytes($path))
+            return $text.Contains($marker)
+          }
+          $debugCore = Get-ChildItem -Recurse -File -Path src/Raven.Windows.Core/bin -Filter Raven.Windows.Core.dll |
+            Where-Object { $_.FullName -match '[\\/]Debug[\\/]' } | Select-Object -First 1
+          if ($null -eq $debugCore) { throw "the Debug Raven.Windows.Core.dll was not found" }
+          if (-not (Test-Marker $debugCore.FullName)) { throw "the check is broken: MockRaven's namespace not found in $($debugCore.FullName)" }
+          $releaseCore = Join-Path $out "Raven.Windows.Core.dll"
+          if (Test-Marker $releaseCore) { throw "MockRaven is in the Release build ($releaseCore)" }
+          "ok: MockRaven only in the Debug core library"
+
+      - name: Test (Release, with the engine)
+        env:
+          RAVEN_REQUIRE_ENGINE_TESTS: "1"
+        run: dotnet test tests/Raven.Windows.Tests/Raven.Windows.Tests.csproj -c Release
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: raven-windows-test-results
+          path: TestResults
+          if-no-files-found: ignore

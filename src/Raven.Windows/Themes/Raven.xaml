@@ -1,0 +1,1198 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+      Raven theme for WinUI 3, from desktop/design/tokens.json:
+      colours per theme (Light.xaml, Dark.xaml; high contrast uses the system colours),
+      spacing, radii, layout sizes, type (Segoe UI Variable / Cascadia Mono) and the
+      named styles the app applies in code (so theme changes update them too).
+    -->
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light" Source="ms-appx:///Themes/Light.xaml" />
+        <ResourceDictionary x:Key="Dark" Source="ms-appx:///Themes/Dark.xaml" />
+        <ResourceDictionary x:Key="Default" Source="ms-appx:///Themes/Dark.xaml" />
+        <ResourceDictionary x:Key="HighContrast">
+                <SolidColorBrush x:Key="RavenBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenSurfaceMutedBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenTextPrimaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenTextSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenBorderStrongBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenAccentBrush" Color="{ThemeResource SystemColorHotlightColor}" />
+                <SolidColorBrush x:Key="RavenAccentFillBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenOnAccentBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                <SolidColorBrush x:Key="RavenAccentSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenSuccessBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenWarningBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenDangerBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPresenceInTouchBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenPresenceWaitingBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPresenceNoneBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+                <SolidColorBrush x:Key="RavenSidebarBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenTextTertiaryBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+                <SolidColorBrush x:Key="RavenAccentFillTopBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenFocusBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenSuccessFillBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenWarningFillBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenWarningSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenDangerFillBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenPathLanBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathNearbyBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathTorBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathDirectBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathRelayBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathFriendBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionGeneralBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionAppearanceBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionPrivacyBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionLockBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionNetworkBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionUpdatesBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSectionAboutBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenPathLanSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenPathNearbySoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenPathTorSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenPathDirectSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenPathRelaySoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenPathFriendSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenNeutralSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenHoverBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenSuccessSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenDangerSoftBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenSidebarPaneBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenWarningLineBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenFocusRingBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenSwitchOffBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+                <SolidColorBrush x:Key="RavenKnobBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenIncomingRingBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenBubbleOutBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                <SolidColorBrush x:Key="RavenAvatar0BackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenAvatar0ForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenAvatar1BackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenAvatar1ForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenAvatar2BackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenAvatar2ForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenAvatar3BackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenAvatar3ForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                <SolidColorBrush x:Key="RavenAvatar4BackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                <SolidColorBrush x:Key="RavenAvatar4ForegroundBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- Type: tokens.json "typography" -->
+    <FontFamily x:Key="RavenTextFontFamily">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="RavenDisplayFontFamily">Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="RavenMonoFontFamily">Cascadia Mono, Consolas</FontFamily>
+    <FontFamily x:Key="RavenIconFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    <x:Double x:Key="RavenBodyFontSize">14</x:Double>
+    <x:Double x:Key="RavenBodyLineHeight">20.3</x:Double>
+    <x:Double x:Key="RavenSmallFontSize">11</x:Double>
+    <x:Double x:Key="RavenTitleFontSize">17</x:Double>
+    <x:Double x:Key="RavenDisplayFontSize">22</x:Double>
+    <x:Double x:Key="RavenMonoFontSize">12</x:Double>
+    <!-- display tracking 8 px at 22 px = 364/1000 em -->
+    <x:Int32 x:Key="RavenDisplayCharacterSpacing">364</x:Int32>
+    <!-- Calm type ramp (tokens.json version 2): bubble 14.5 x 1.42, label 13.5, caption 12.5, meta 11.5,
+         section label 11 (+0.04 em, upper case in code), brand 15, page title 24 (-0.01 em). -->
+    <x:Double x:Key="RavenBubbleFontSize">14.5</x:Double>
+    <x:Double x:Key="RavenBubbleLineHeight">20.59</x:Double>
+    <x:Double x:Key="RavenLabelFontSize">13.5</x:Double>
+    <x:Double x:Key="RavenCaptionFontSize">12.5</x:Double>
+    <x:Double x:Key="RavenMetaFontSize">11.5</x:Double>
+    <x:Double x:Key="RavenSectionLabelFontSize">11</x:Double>
+    <x:Int32 x:Key="RavenSectionLabelCharacterSpacing">40</x:Int32>
+    <x:Double x:Key="RavenBrandFontSize">15</x:Double>
+    <x:Double x:Key="RavenPageTitleFontSize">24</x:Double>
+    <x:Int32 x:Key="RavenPageTitleCharacterSpacing">-10</x:Int32>
+
+    <!-- Spacing: tokens.json "spacing" -->
+    <x:Double x:Key="RavenSpaceXs">4</x:Double>
+    <x:Double x:Key="RavenSpaceSm">8</x:Double>
+    <x:Double x:Key="RavenSpaceMd">12</x:Double>
+    <x:Double x:Key="RavenSpaceLg">16</x:Double>
+    <x:Double x:Key="RavenSpaceXl">24</x:Double>
+    <x:Double x:Key="RavenSpaceXxl">32</x:Double>
+
+    <!-- Radii: tokens.json "radius" -->
+    <CornerRadius x:Key="RavenControlRadius">8</CornerRadius>
+    <CornerRadius x:Key="RavenCardRadius">16</CornerRadius>
+    <CornerRadius x:Key="RavenGroupRadius">14</CornerRadius>
+    <CornerRadius x:Key="RavenRowRadius">10</CornerRadius>
+    <CornerRadius x:Key="RavenChipRadius">13</CornerRadius>
+    <CornerRadius x:Key="RavenChipSmallRadius">10</CornerRadius>
+    <CornerRadius x:Key="RavenBadgeRadius">9</CornerRadius>
+    <CornerRadius x:Key="RavenComposerRadius">22</CornerRadius>
+    <CornerRadius x:Key="RavenSheetRadius">22</CornerRadius>
+    <CornerRadius x:Key="RavenDialogRadius">18</CornerRadius>
+    <CornerRadius x:Key="RavenSegmentRadius">10</CornerRadius>
+    <CornerRadius x:Key="RavenSegmentThumbRadius">7</CornerRadius>
+    <CornerRadius x:Key="RavenWindowRadius">12</CornerRadius>
+    <!-- bubble 18 with a 6 px tail corner: in = bottom-left, out = bottom-right -->
+    <CornerRadius x:Key="RavenBubbleInRadius">18,18,18,6</CornerRadius>
+    <CornerRadius x:Key="RavenBubbleOutRadius">18,18,6,18</CornerRadius>
+    <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">12</CornerRadius>
+
+    <!-- Layout: tokens.json "layout" -->
+    <x:Double x:Key="RavenSidebarWidth">272</x:Double>
+    <x:Double x:Key="RavenSidebarMinWidth">220</x:Double>
+    <x:Double x:Key="RavenSettingsNavWidth">228</x:Double>
+    <x:Double x:Key="RavenMinWindowWidth">560</x:Double>
+    <x:Double x:Key="RavenMinWindowHeight">480</x:Double>
+    <x:Double x:Key="RavenHeaderHeight">66</x:Double>
+    <x:Double x:Key="RavenRouteLineHeight">34</x:Double>
+    <x:Double x:Key="RavenAvatarSize">36</x:Double>
+    <x:Double x:Key="RavenAvatarSmall">22</x:Double>
+    <x:Double x:Key="RavenAvatarLarge">40</x:Double>
+    <x:Double x:Key="RavenPresenceDotSize">11</x:Double>
+    <x:Double x:Key="RavenContentMaxWidth">760</x:Double>
+    <x:Double x:Key="RavenPageMaxWidth">900</x:Double>
+    <x:Double x:Key="RavenSettingsMaxWidth">700</x:Double>
+    <x:Double x:Key="RavenBubbleMaxFraction">0.72</x:Double>
+    <x:Double x:Key="RavenChipHeight">20</x:Double>
+    <x:Double x:Key="RavenPillHeight">26</x:Double>
+    <x:Double x:Key="RavenButtonHeight">30</x:Double>
+    <x:Double x:Key="RavenSendButtonSize">34</x:Double>
+    <x:Double x:Key="RavenSwitchWidth">36</x:Double>
+    <x:Double x:Key="RavenSwitchHeight">22</x:Double>
+    <x:Double x:Key="RavenSwitchKnobSize">16</x:Double>
+    <x:Double x:Key="RavenGroupRingSize">18</x:Double>
+
+    <!-- ===== Text styles ===== -->
+    <Style x:Key="RavenBodyTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenBodyFontSize}" />
+        <Setter Property="LineHeight" Value="{StaticResource RavenBodyLineHeight}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="RavenSecondaryTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBodyTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+    </Style>
+    <Style x:Key="RavenSuccessTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBodyTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenWarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBodyTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenDangerTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBodyTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenSmallTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style x:Key="RavenSmallAccentTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenSmallTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenSmallSuccessTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenSmallTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenSmallWarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenSmallTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenSmallDangerTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenSmallTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenDisplayFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenTitleFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="RavenDisplayTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenDisplayFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenDisplayFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="{StaticResource RavenDisplayCharacterSpacing}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+    </Style>
+    <Style x:Key="RavenMonoTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenMonoFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenMonoFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="IsTextSelectionEnabled" Value="True" />
+    </Style>
+    <Style x:Key="RavenNameTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenBodyFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="MaxLines" Value="1" />
+    </Style>
+    <Style x:Key="RavenBubbleInTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenBubbleFontSize}" />
+        <Setter Property="LineHeight" Value="{StaticResource RavenBubbleLineHeight}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="IsTextSelectionEnabled" Value="True" />
+    </Style>
+    <Style x:Key="RavenBubbleOutTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBubbleInTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenChipTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenBodyFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipHighlightTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenChipTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenPacketTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+    </Style>
+    <Style x:Key="RavenPacketReceiptTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenPacketTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+
+    <!-- ===== Surfaces ===== -->
+    <Style x:Key="RavenCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenCardRadius}" />
+        <Setter Property="Padding" Value="18,16" />
+    </Style>
+    <Style x:Key="RavenBubbleInStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenBubbleInRadius}" />
+        <Setter Property="Padding" Value="14,9" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+    <Style x:Key="RavenBubbleOutStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenBubbleOutBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenBubbleOutRadius}" />
+        <Setter Property="Padding" Value="14,9" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <!-- A message of yours that waits: an outline instead of the fill (DESIGN.md "Calm", pending). -->
+    <Style x:Key="RavenBubbleOutWaitingStyle" TargetType="Border" BasedOn="{StaticResource RavenBubbleOutStyle}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenFocusRingBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+    <Style x:Key="RavenBubbleOutWaitingTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenBubbleInTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenChipStyle" TargetType="Border">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderStrongBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,3" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="MinHeight" Value="28" />
+    </Style>
+    <Style x:Key="RavenChipHighlightStyle" TargetType="Border" BasedOn="{StaticResource RavenChipStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentSoftBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style x:Key="RavenChipEmptyStyle" TargetType="Border" BasedOn="{StaticResource RavenChipStyle}">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+    </Style>
+    <!-- A small state chip ("stat"): a soft neutral tint, no line. -->
+    <Style x:Key="RavenPillStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ===== Avatars and presence ===== -->
+    <Style x:Key="RavenAvatarBaseStyle" TargetType="Border">
+        <Setter Property="Width" Value="{StaticResource RavenAvatarSize}" />
+        <Setter Property="Height" Value="{StaticResource RavenAvatarSize}" />
+        <Setter Property="CornerRadius" Value="18" />
+    </Style>
+    <Style x:Key="RavenAvatarTextBaseStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenAvatar0Style" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAvatar0BackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarText0Style" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAvatar0ForegroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatar1Style" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAvatar1BackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarText1Style" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAvatar1ForegroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatar2Style" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAvatar2BackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarText2Style" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAvatar2ForegroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatar3Style" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAvatar3BackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarText3Style" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAvatar3ForegroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatar4Style" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAvatar4BackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarText4Style" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAvatar4ForegroundBrush}" />
+    </Style>
+    <Style x:Key="RavenDotBaseStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="{StaticResource RavenPresenceDotSize}" />
+        <Setter Property="Height" Value="{StaticResource RavenPresenceDotSize}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Stroke" Value="{ThemeResource RavenSidebarBrush}" />
+    </Style>
+    <Style x:Key="RavenDotInTouchStyle" TargetType="Ellipse" BasedOn="{StaticResource RavenDotBaseStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenPresenceInTouchBrush}" />
+    </Style>
+    <Style x:Key="RavenDotWaitingStyle" TargetType="Ellipse" BasedOn="{StaticResource RavenDotBaseStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenPresenceWaitingBrush}" />
+    </Style>
+    <Style x:Key="RavenDotNoneStyle" TargetType="Ellipse" BasedOn="{StaticResource RavenDotBaseStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenPresenceNoneBrush}" />
+    </Style>
+    <Style x:Key="RavenRetryRingStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="{StaticResource RavenPresenceDotSize}" />
+        <Setter Property="Height" Value="{StaticResource RavenPresenceDotSize}" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="Stroke" Value="{ThemeResource RavenPresenceWaitingBrush}" />
+        <Setter Property="Fill" Value="Transparent" />
+    </Style>
+
+    <!-- ===================================================================================
+         Calm (DESIGN.md "Calm", tokens.json version 2). Named styles the app applies in code,
+         so a theme change (Settings > Appearance) updates them too.
+         =================================================================================== -->
+
+    <!-- Calm text ramp -->
+    <Style x:Key="RavenLabelTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenLabelFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="MaxLines" Value="1" />
+    </Style>
+    <Style x:Key="RavenLabelWrapTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenLabelTextStyle}">
+        <Setter Property="TextTrimming" Value="None" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="MaxLines" Value="0" />
+    </Style>
+    <Style x:Key="RavenCaptionTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenCaptionFontSize}" />
+        <Setter Property="LineHeight" Value="18" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="RavenCaptionPrimaryTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenCaptionTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+    </Style>
+    <Style x:Key="RavenCaptionWarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenCaptionTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenCaptionLineTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenCaptionTextStyle}">
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="MaxLines" Value="1" />
+    </Style>
+    <Style x:Key="RavenCaptionLineWarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenCaptionLineTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenMetaFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenMetaTertiaryTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextTertiaryBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaAccentTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaSuccessTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaWarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaDangerTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenMetaStrongTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenMetaTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="RavenSectionLabelTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenSectionLabelFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="{StaticResource RavenSectionLabelCharacterSpacing}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextTertiaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style x:Key="RavenBrandTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenTextFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenBrandFontSize}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPageTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenDisplayFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenPageTitleFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CharacterSpacing" Value="{StaticResource RavenPageTitleCharacterSpacing}" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="RavenHeaderNameTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource RavenDisplayFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource RavenTitleFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="MaxLines" Value="1" />
+    </Style>
+    <Style x:Key="RavenBadgeTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Calm surfaces -->
+    <Style x:Key="RavenGroupStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenGroupRadius}" />
+        <Setter Property="Margin" Value="0,0,0,22" />
+    </Style>
+    <Style x:Key="RavenBadgeStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentFillBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenBadgeRadius}" />
+        <Setter Property="MinWidth" Value="18" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenAwayCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenWarningSoftBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenWarningLineBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenCardRadius}" />
+        <Setter Property="Padding" Value="18,16" />
+        <Setter Property="Margin" Value="0,14,0,6" />
+    </Style>
+    <Style x:Key="RavenBannerStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenWarningSoftBrush}" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="14,12" />
+        <Setter Property="Margin" Value="0,12,0,4" />
+    </Style>
+    <Style x:Key="RavenNoteStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentSoftBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="0,0,0,14" />
+    </Style>
+    <Style x:Key="RavenSuccessNoteStyle" TargetType="Border" BasedOn="{StaticResource RavenNoteStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenSuccessSoftBrush}" />
+    </Style>
+    <Style x:Key="RavenComposerStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderStrongBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenComposerRadius}" />
+        <Setter Property="Padding" Value="14,5,5,5" />
+    </Style>
+    <Style x:Key="RavenComposerFocusedStyle" TargetType="Border" BasedOn="{StaticResource RavenComposerStyle}">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenFocusRingBrush}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Padding" Value="13,4,4,4" />
+    </Style>
+    <Style x:Key="RavenToastStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="14,6" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenSidebarRowSelectedStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenRowRadius}" />
+    </Style>
+    <Style x:Key="RavenSearchStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+        <Setter Property="CornerRadius" Value="9" />
+    </Style>
+    <Style x:Key="RavenSegmentTrackStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenSegmentRadius}" />
+        <Setter Property="Padding" Value="3" />
+    </Style>
+    <Style x:Key="RavenSegmentThumbStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenSegmentThumbRadius}" />
+    </Style>
+    <Style x:Key="RavenGliderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSurfaceBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenRowRadius}" />
+    </Style>
+    <Style x:Key="RavenDayLineStyle" TargetType="Rectangle">
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Fill" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenTrackLineStyle" TargetType="Rectangle">
+        <Setter Property="Height" Value="2" />
+        <Setter Property="RadiusX" Value="1" />
+        <Setter Property="RadiusY" Value="1" />
+        <Setter Property="Fill" Value="{ThemeResource RavenBorderStrongBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenTrackDashedStyle" TargetType="Line">
+        <Setter Property="Stroke" Value="{ThemeResource RavenBorderStrongBrush}" />
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Dots that travel or pulse (honest motion: each on a real event) -->
+    <Style x:Key="RavenPacketDotStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Fill" Value="{ThemeResource RavenAccentFillBrush}" />
+    </Style>
+    <Style x:Key="RavenReceiptDotStyle" TargetType="Border">
+        <Setter Property="Width" Value="14" />
+        <Setter Property="Height" Value="14" />
+        <Setter Property="CornerRadius" Value="7" />
+        <Setter Property="Background" Value="{ThemeResource RavenSuccessFillBrush}" />
+    </Style>
+    <Style x:Key="RavenReceiptGlyphStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="8" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+        <Setter Property="Glyph" Value="&#xE73E;" />
+    </Style>
+    <Style x:Key="RavenHoldDotStyle" TargetType="Ellipse" BasedOn="{StaticResource RavenPacketDotStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenWarningFillBrush}" />
+    </Style>
+    <Style x:Key="RavenHeartDotStyle" TargetType="Ellipse">
+        <Setter Property="Width" Value="7" />
+        <Setter Property="Height" Value="7" />
+        <Setter Property="Fill" Value="{ThemeResource RavenPresenceInTouchBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenHeartDownDotStyle" TargetType="Ellipse" BasedOn="{StaticResource RavenHeartDotStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenDangerFillBrush}" />
+    </Style>
+    <Style x:Key="RavenRadarRingStyle" TargetType="Ellipse">
+        <Setter Property="Stroke" Value="{ThemeResource RavenSuccessFillBrush}" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="Fill" Value="Transparent" />
+    </Style>
+    <Style x:Key="RavenHaloStyle" TargetType="Ellipse">
+        <Setter Property="Fill" Value="{ThemeResource RavenSuccessSoftBrush}" />
+    </Style>
+    <Style x:Key="RavenRippleStyle" TargetType="Ellipse">
+        <Setter Property="Stroke" Value="{ThemeResource RavenSuccessFillBrush}" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="Fill" Value="Transparent" />
+    </Style>
+
+    <!-- Tick and state icons (Segoe Fluent Icons): sending, sent, delivered, waiting, not delivered -->
+    <Style x:Key="RavenTickIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenTickIconSuccessStyle" TargetType="FontIcon" BasedOn="{StaticResource RavenTickIconStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenTickIconWarningStyle" TargetType="FontIcon" BasedOn="{StaticResource RavenTickIconStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenWarningBrush}" />
+    </Style>
+    <Style x:Key="RavenTickIconDangerStyle" TargetType="FontIcon" BasedOn="{StaticResource RavenTickIconStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenTickIconAccentStyle" TargetType="FontIcon" BasedOn="{StaticResource RavenTickIconStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenNavIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+    </Style>
+    <Style x:Key="RavenOnTileIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style x:Key="RavenChipLanStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathLanSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipLanTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathLanBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipLanIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathLanBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillLanStyle" TargetType="Border" BasedOn="{StaticResource RavenChipLanStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileLanStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathLanSoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileLanIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathLanBrush}" />
+    </Style>
+    <Style x:Key="RavenChipNearbyStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathNearbySoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipNearbyTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathNearbyBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipNearbyIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathNearbyBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillNearbyStyle" TargetType="Border" BasedOn="{StaticResource RavenChipNearbyStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileNearbyStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathNearbySoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileNearbyIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathNearbyBrush}" />
+    </Style>
+    <Style x:Key="RavenChipTorStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathTorSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipTorTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathTorBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipTorIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathTorBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillTorStyle" TargetType="Border" BasedOn="{StaticResource RavenChipTorStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileTorStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathTorSoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileTorIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathTorBrush}" />
+    </Style>
+    <Style x:Key="RavenChipDirectStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathDirectSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipDirectTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathDirectBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipDirectIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathDirectBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillDirectStyle" TargetType="Border" BasedOn="{StaticResource RavenChipDirectStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileDirectStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathDirectSoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileDirectIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathDirectBrush}" />
+    </Style>
+    <Style x:Key="RavenChipRelayStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathRelaySoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipRelayTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathRelayBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipRelayIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathRelayBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillRelayStyle" TargetType="Border" BasedOn="{StaticResource RavenChipRelayStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileRelayStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathRelaySoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileRelayIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathRelayBrush}" />
+    </Style>
+    <Style x:Key="RavenChipFriendStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathFriendSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipFriendTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathFriendBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipFriendIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathFriendBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillFriendStyle" TargetType="Border" BasedOn="{StaticResource RavenChipFriendStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileFriendStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenPathFriendSoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileFriendIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathFriendBrush}" />
+    </Style>
+    <Style x:Key="RavenChipOtherStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipSmallRadius}" />
+        <Setter Property="Height" Value="{StaticResource RavenChipHeight}" />
+        <Setter Property="Padding" Value="6,0,8,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenChipOtherTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource RavenSmallFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+    <Style x:Key="RavenChipOtherIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPillOtherStyle" TargetType="Border" BasedOn="{StaticResource RavenChipOtherStyle}">
+        <Setter Property="Height" Value="{StaticResource RavenPillHeight}" />
+        <Setter Property="CornerRadius" Value="{StaticResource RavenChipRadius}" />
+        <Setter Property="Padding" Value="9,0,10,0" />
+    </Style>
+    <Style x:Key="RavenWayTileOtherStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="RavenWayTileOtherIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+    </Style>
+    <Style x:Key="RavenSectionTileGeneralStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionGeneralBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTileAppearanceStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionAppearanceBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTilePrivacyStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionPrivacyBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTileLockStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionLockBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTileNetworkStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionNetworkBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTileUpdatesStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionUpdatesBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+    <Style x:Key="RavenSectionTileAboutStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSectionAboutBrush}" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
+
+    <!-- Avatars: small (22) and large (40) sizes over the colour styles above -->
+    <Style x:Key="RavenAvatarSmallTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <!-- The Calm switch (Controls/CalmSwitch.cs): a 36 x 22 track, a knob that springs across. -->
+    <Style x:Key="RavenSwitchStyle" TargetType="ToggleButton">
+        <Setter Property="Width" Value="{StaticResource RavenSwitchWidth}" />
+        <Setter Property="Height" Value="{StaticResource RavenSwitchHeight}" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="CornerRadius" Value="11" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Background="Transparent">
+                        <Border x:Name="Track" Background="{ThemeResource RavenSwitchOffBrush}" CornerRadius="11" />
+                        <Border x:Name="OnTrack" Background="{ThemeResource RavenSuccessFillBrush}" CornerRadius="11" Opacity="0" />
+                        <Ellipse
+                            x:Name="Knob"
+                            Width="{StaticResource RavenSwitchKnobSize}"
+                            Height="{StaticResource RavenSwitchKnobSize}"
+                            Margin="3,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Fill="{ThemeResource RavenKnobBrush}"
+                            Stroke="{ThemeResource RavenBorderBrush}"
+                            StrokeThickness="0.5" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- A radio button drawn only by its content: segmented controls and the Settings sections. -->
+    <Style x:Key="RavenPlainRadioStyle" TargetType="RadioButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <ContentPresenter
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Background="{TemplateBinding Background}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        CornerRadius="{TemplateBinding CornerRadius}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- The group ring: one arc per member a message of yours was for (GroupPresenter.Segments). -->
+    <Style x:Key="RavenRingDeliveredStyle" TargetType="Path">
+        <Setter Property="Stroke" Value="{ThemeResource RavenSuccessFillBrush}" />
+        <Setter Property="StrokeThickness" Value="3.2" />
+    </Style>
+    <Style x:Key="RavenRingPassedOnStyle" TargetType="Path" BasedOn="{StaticResource RavenRingDeliveredStyle}">
+        <Setter Property="Stroke" Value="{ThemeResource RavenWarningFillBrush}" />
+    </Style>
+    <Style x:Key="RavenRingPendingStyle" TargetType="Path" BasedOn="{StaticResource RavenRingDeliveredStyle}">
+        <Setter Property="Stroke" Value="{ThemeResource RavenBorderStrongBrush}" />
+    </Style>
+    <Style x:Key="RavenRingFailedStyle" TargetType="Path" BasedOn="{StaticResource RavenRingDeliveredStyle}">
+        <Setter Property="Stroke" Value="{ThemeResource RavenDangerFillBrush}" />
+    </Style>
+    <!-- The Tor onion (no Segoe glyph for it): two ellipses in the Tor colour. -->
+    <Style x:Key="RavenOnionStyle" TargetType="Ellipse">
+        <Setter Property="Stroke" Value="{ThemeResource RavenPathTorBrush}" />
+        <Setter Property="StrokeThickness" Value="1.3" />
+        <Setter Property="Fill" Value="Transparent" />
+    </Style>
+    <Style x:Key="RavenAvatarYouStyle" TargetType="Border" BasedOn="{StaticResource RavenAvatarBaseStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentSoftBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarTextYouStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenAvatarTextBaseStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenAvatarRingStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenSidebarBrush}" />
+        <Setter Property="BorderThickness" Value="2" />
+    </Style>
+    <!-- An incoming bubble just arrived: a soft accent ring for 1.5 s (Calm "fresh"). -->
+    <Style x:Key="RavenBubbleInFreshStyle" TargetType="Border" BasedOn="{StaticResource RavenBubbleInStyle}">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenIncomingRingBrush}" />
+    </Style>
+    <!-- Bars and surfaces the code-built pages use (so a theme change follows). -->
+    <Style x:Key="RavenHeaderBarStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="MinHeight" Value="{StaticResource RavenHeaderHeight}" />
+        <Setter Property="Padding" Value="22,10,22,10" />
+    </Style>
+    <Style x:Key="RavenRouteBarStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Height" Value="{StaticResource RavenRouteLineHeight}" />
+        <Setter Property="Padding" Value="22,0,22,0" />
+    </Style>
+    <Style x:Key="RavenRouteLabelStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenBackgroundBrush}" />
+        <Setter Property="Padding" Value="10,0,10,0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenPageStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenBackgroundBrush}" />
+    </Style>
+    <Style x:Key="RavenTertiaryIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextTertiaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <!-- Security words: Calm tiles; the one being said is filled with the accent and raised. -->
+    <Style x:Key="RavenWordTileStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="10,9,10,9" />
+        <Setter Property="Margin" Value="4" />
+    </Style>
+    <Style x:Key="RavenWordTileCheckStyle" TargetType="Border" BasedOn="{StaticResource RavenWordTileStyle}">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenPathFriendBrush}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+    </Style>
+    <Style x:Key="RavenWordTileSayStyle" TargetType="Border" BasedOn="{StaticResource RavenWordTileStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentFillBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenAccentFillBrush}" />
+    </Style>
+    <Style x:Key="RavenWordNumberTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextTertiaryBrush}" />
+    </Style>
+    <Style x:Key="RavenWordTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextPrimaryBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style x:Key="RavenWordSayNumberTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenWordNumberTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenWordSayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenWordTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenWordCheckTagTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="9.5" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="CharacterSpacing" Value="50" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenPathFriendBrush}" />
+    </Style>
+    <Style x:Key="RavenWordCheckTagSayTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenWordCheckTagTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+    </Style>
+    <!-- The lock (Controls/LockGlyph.cs): a body and a shackle that closes before Raven locks. -->
+    <Style x:Key="RavenLockTileAccentStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentSoftBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style x:Key="RavenLockPartAccentStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenLockDotAccentStyle" TargetType="Ellipse">
+        <Setter Property="Fill" Value="{ThemeResource RavenAccentBrush}" />
+    </Style>
+    <Style x:Key="RavenLockTileSuccessStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSuccessSoftBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style x:Key="RavenLockPartSuccessStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenLockDotSuccessStyle" TargetType="Ellipse">
+        <Setter Property="Fill" Value="{ThemeResource RavenSuccessBrush}" />
+    </Style>
+    <Style x:Key="RavenLockTileDangerStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenDangerSoftBrush}" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+    <Style x:Key="RavenLockPartDangerStyle" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenLockDotDangerStyle" TargetType="Ellipse">
+        <Setter Property="Fill" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <Style x:Key="RavenDangerButtonTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource RavenDangerBrush}" />
+    </Style>
+    <!-- Settings: the fine line between items, and the state chips ("stat"). -->
+    <Style x:Key="RavenSeparatorStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenBorderBrush}" />
+    </Style>
+    <Style x:Key="RavenStatSuccessStyle" TargetType="Border" BasedOn="{StaticResource RavenPillStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenSuccessSoftBrush}" />
+    </Style>
+    <Style x:Key="RavenStatWarningStyle" TargetType="Border" BasedOn="{StaticResource RavenPillStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenWarningSoftBrush}" />
+    </Style>
+    <!-- Setup's steps (Controls/StepsBar.cs): done (green check), now (accent number), later. -->
+    <Style x:Key="RavenStepDoneStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource RavenSuccessFillBrush}" />
+        <Setter Property="CornerRadius" Value="9" />
+        <Setter Property="Width" Value="18" />
+        <Setter Property="Height" Value="18" />
+    </Style>
+    <Style x:Key="RavenStepNowStyle" TargetType="Border" BasedOn="{StaticResource RavenStepDoneStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenAccentFillBrush}" />
+    </Style>
+    <Style x:Key="RavenStepLaterStyle" TargetType="Border" BasedOn="{StaticResource RavenStepDoneStyle}">
+        <Setter Property="Background" Value="{ThemeResource RavenNeutralSoftBrush}" />
+    </Style>
+    <Style x:Key="RavenStepOnTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{ThemeResource RavenOnAccentBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenStepTextStyle" TargetType="TextBlock" BasedOn="{StaticResource RavenStepOnTextStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource RavenTextSecondaryBrush}" />
+    </Style>
+    <Style x:Key="RavenStepBarStyle" TargetType="Rectangle">
+        <Setter Property="Height" Value="2" />
+        <Setter Property="Fill" Value="{ThemeResource RavenBorderBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="RavenStepBarDoneStyle" TargetType="Rectangle" BasedOn="{StaticResource RavenStepBarStyle}">
+        <Setter Property="Fill" Value="{ThemeResource RavenSuccessFillBrush}" />
+    </Style>
+
+</ResourceDictionary>

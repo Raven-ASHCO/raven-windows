@@ -1,0 +1,16 @@
+<Project>
+  <!-- Shared settings for every project under desktop/windows/. -->
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <Company>Raven</Company>
+    <Product>Raven</Product>
+    <Copyright>Raven contributors</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <!-- English only: do not copy localized satellite assemblies of dependencies. -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

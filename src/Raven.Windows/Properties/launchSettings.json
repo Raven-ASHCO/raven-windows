@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "Raven (unpackaged, first run)": {
+      "commandName": "Project"
+    },
+    "Raven (unpackaged, demo ready)": {
+      "commandName": "Project",
+      "commandLineArgs": "--mock-ready"
+    },
+    "Raven (unpackaged, Locked screen)": {
+      "commandName": "Project",
+      "commandLineArgs": "--mock-locked"
+    },
+    "Raven (MSIX package)": {
+      "commandName": "MsixPackage"
+    }
+  }
+}

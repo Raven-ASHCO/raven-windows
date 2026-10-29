@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Raven for Windows: WinUI 3 (Windows App SDK) desktop app.
+    Default: unpackaged and self-contained (Windows App SDK runtime copied next to Raven.exe),
+    so `dotnet build -p:Platform=x64` and F5 just run it.
+    MSIX: build with -p:WindowsPackageType=MSIX (uses Package.appxmanifest; needs a signing
+    certificate whose subject matches Identity/Publisher).
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <RootNamespace>Raven.Windows</RootNamespace>
+    <AssemblyName>Raven</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Raven.ico</ApplicationIcon>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsPackageType Condition="'$(WindowsPackageType)' == ''">None</WindowsPackageType>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <!-- Program.cs has its own Main (single instance + redirect to the running Raven). -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+  </PropertyGroup>
+
+  <!-- WinUI has no AnyCPU build: default to x64 when no platform is given. -->
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'AnyCPU'">x64</Platform>
+  </PropertyGroup>
+
+  <!-- Pick the runtime identifier from the platform so command-line builds work. -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == ''">
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x64'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'x86'">win-x86</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(WindowsPackageType)' == 'None'">
+    <!-- Unpackaged: carry the Windows App SDK runtime, nothing to install first. -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\**" CopyToOutputDirectory="PreserveNewest" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!--
+    Raven's engine next to Raven.exe: raven_client.dll (the app calls it, RavenClientEngine) and
+    raven-node.exe (the background program the engine starts), from a release build of the
+    crates raven-client and raven-node in core/node/ (x64: core\node\target\release; ARM64 and x86: the
+    release folder of that Rust target), copied when present. Without them the app still
+    builds and opens on "this build doesn't include its engine". Another folder:
+    -p:RavenEngineDir=<folder>\
+  -->
+  <PropertyGroup Condition="'$(RavenEngineDir)' == ''">
+    <RavenNodeTarget>$(MSBuildThisFileDirectory)..\..\core\node\target\</RavenNodeTarget>
+    <RavenEngineDir Condition="'$(Platform)' == 'ARM64'">$(RavenNodeTarget)aarch64-pc-windows-msvc\release\</RavenEngineDir>
+    <RavenEngineDir Condition="'$(Platform)' == 'x86'">$(RavenNodeTarget)i686-pc-windows-msvc\release\</RavenEngineDir>
+    <RavenEngineDir Condition="'$(RavenEngineDir)' == ''">$(RavenNodeTarget)release\</RavenEngineDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(RavenEngineDir)raven_client.dll" Link="raven_client.dll" Condition="Exists('$(RavenEngineDir)raven_client.dll')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(RavenEngineDir)raven-node.exe" Link="raven-node.exe" Condition="Exists('$(RavenEngineDir)raven-node.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
+  <!-- Visual Studio: offer the MSIX "Package and Publish" menu. -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)' != 'true' and '$(EnableMsixTooling)' == 'true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)' != 'true' and '$(EnableMsixTooling)' == 'true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Versions are pinned in Directory.Packages.props. -->
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Raven.Windows.Core\Raven.Windows.Core.csproj" />
+  </ItemGroup>
+
+</Project>

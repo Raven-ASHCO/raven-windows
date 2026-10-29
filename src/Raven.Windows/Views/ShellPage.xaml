@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.ShellPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!--
+        The Calm sidebar (a NavigationView left pane, restyled through the lightweight resources in
+        Themes/Light.xaml and Dark.xaml): the brand row with the background program's heartbeat,
+        search, You, FRIENDS, GROUPS (only when the engine has groups), Add a friend; Network (with
+        how many ways are on), Security words, Security and Settings in the footer.
+    -->
+    <NavigationView
+        x:Name="Nav"
+        AlwaysShowHeader="False"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleButtonVisible="False"
+        IsSettingsVisible="False"
+        ItemInvoked="OnItemInvoked"
+        OpenPaneLength="{StaticResource RavenSidebarWidth}"
+        PaneDisplayMode="Left"
+        SelectionChanged="OnSelectionChanged"
+        SizeChanged="OnNavSizeChanged">
+
+        <NavigationView.PaneHeader>
+            <!-- Brand: the mark, "Raven", and the heartbeat (it beats once per real status check). -->
+            <Grid Padding="14,8,12,4" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image
+                    Width="26"
+                    Height="26"
+                    VerticalAlignment="Center"
+                    Source="ms-appx:///Assets/RavenMark.png"
+                    AutomationProperties.AccessibilityView="Raw" />
+                <TextBlock Grid.Column="1" Style="{StaticResource RavenBrandTextStyle}" Text="{h:Str Key=app.name}" />
+                <StackPanel
+                    x:Name="HeartGroup"
+                    Grid.Column="2"
+                    MinWidth="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <Ellipse x:Name="HeartDot" RenderTransformOrigin="0.5,0.5" Style="{StaticResource RavenHeartDotStyle}" AutomationProperties.AccessibilityView="Raw">
+                        <Ellipse.RenderTransform>
+                            <ScaleTransform x:Name="HeartScale" ScaleX="1" ScaleY="1" />
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                    <ProgressRing
+                        x:Name="NodeSpinner"
+                        Width="10"
+                        Height="10"
+                        MinWidth="0"
+                        MinHeight="0"
+                        IsActive="False"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        x:Name="HeartbeatText"
+                        MaxWidth="150"
+                        Style="{StaticResource RavenMetaTextStyle}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Grid>
+        </NavigationView.PaneHeader>
+
+        <NavigationView.AutoSuggestBox>
+            <AutoSuggestBox
+                x:Name="SearchBox"
+                PlaceholderText="{h:Str Key=home.search}"
+                QueryIcon="Find"
+                TextChanged="OnSearchChanged"
+                AutomationProperties.Name="{h:Str Key=home.search}" />
+        </NavigationView.AutoSuggestBox>
+
+        <NavigationView.MenuItems>
+            <!-- You: your name and fingerprint; opens your card, security words and fingerprint. -->
+            <NavigationViewItem x:Name="YouItem" SelectsOnInvoked="False" AutomationProperties.AutomationId="YouItem">
+                <Grid Padding="0,6,4,6" ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ContentControl x:Name="YouAvatarHost" IsTabStop="False" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                        <TextBlock x:Name="YouTitle" Style="{StaticResource RavenLabelTextStyle}" Text="{h:Str Key=you.title}" />
+                        <TextBlock x:Name="YouFingerprint" FontSize="12" Style="{StaticResource RavenCaptionLineTextStyle}" Visibility="Collapsed" />
+                    </StackPanel>
+                </Grid>
+            </NavigationViewItem>
+            <NavigationViewItemHeader x:Name="FriendsHeader">
+                <TextBlock x:Name="FriendsHeaderText" Style="{StaticResource RavenSectionLabelTextStyle}" />
+            </NavigationViewItemHeader>
+            <NavigationViewItemHeader x:Name="GroupsHeader" Visibility="Collapsed">
+                <TextBlock x:Name="GroupsHeaderText" Style="{StaticResource RavenSectionLabelTextStyle}" />
+            </NavigationViewItemHeader>
+            <NavigationViewItem x:Name="NewGroupItem" SelectsOnInvoked="False" Visibility="Collapsed" AutomationProperties.Name="{h:Str Key=home.newGroup}">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE716;" />
+                </NavigationViewItem.Icon>
+                <TextBlock Style="{StaticResource RavenCaptionTextStyle}" Text="{h:Str Key=home.newGroup}" />
+            </NavigationViewItem>
+            <NavigationViewItem x:Name="AddFriendItem" SelectsOnInvoked="False" AutomationProperties.Name="{h:Str Key=home.addFriend}">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE710;" Foreground="{ThemeResource RavenAccentBrush}" />
+                </NavigationViewItem.Icon>
+                <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource RavenAccentBrush}" Style="{StaticResource RavenCaptionTextStyle}" Text="{h:Str Key=home.addFriend}" />
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem x:Name="NetworkItem" Tag="network" AutomationProperties.Name="{h:Str Key=nav.network}">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE701;" />
+                </NavigationViewItem.Icon>
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock VerticalAlignment="Center" Text="{h:Str Key=nav.network}" />
+                    <TextBlock x:Name="WaysOnText" Grid.Column="1" Margin="0,0,6,0" Style="{StaticResource RavenMetaTertiaryTextStyle}" />
+                </Grid>
+            </NavigationViewItem>
+            <NavigationViewItem x:Name="WordsItem" Content="{h:Str Key=nav.securityWords}" SelectsOnInvoked="False">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE8FD;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Name="SecurityItem" Content="{h:Str Key=security.title}" Tag="security">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Name="SettingsItem" Content="{h:Str Key=settings.title}" Tag="settings">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE713;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.FooterMenuItems>
+
+        <Grid Background="{ThemeResource RavenBackgroundBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- A developer build with lab switches: one line above every page but Network (which shows
+                 the whole banner). One line only, never wrapping: the switch list is in the tooltip. -->
+            <Grid
+                x:Name="LabBar"
+                Grid.Row="0"
+                Padding="12,4"
+                Background="{ThemeResource RavenSurfaceMutedBrush}"
+                BorderBrush="{ThemeResource RavenBorderBrush}"
+                BorderThickness="0,0,0,1"
+                ColumnSpacing="8"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <FontIcon Grid.Column="0" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource RavenWarningBrush}" Glyph="&#xE7BA;" AutomationProperties.AccessibilityView="Raw" />
+                <TextBlock
+                    x:Name="LabBarText"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    MaxLines="1"
+                    Style="{StaticResource RavenSmallWarningTextStyle}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+                <!-- Not a Tab stop: Network is in the pane already (E1: one more stop on every page). -->
+                <HyperlinkButton Grid.Column="2" Padding="4,0" VerticalAlignment="Center" Click="OnLabBarNetwork" Content="{h:Str Key=nav.network}" IsTabStop="False" />
+            </Grid>
+            <InfoBar x:Name="ShellError" Grid.Row="1" Margin="12,8,12,0" IsClosable="True" IsOpen="False" />
+            <!-- The page or chat; each comes in from 6 points lower (Calm viewIn) when the person opens it. -->
+            <ContentControl
+                x:Name="Body"
+                Grid.Row="2"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                IsTabStop="False">
+                <ContentControl.RenderTransform>
+                    <TranslateTransform x:Name="BodyShift" />
+                </ContentControl.RenderTransform>
+            </ContentControl>
+        </Grid>
+    </NavigationView>
+</UserControl>

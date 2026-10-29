@@ -1,0 +1,17 @@
+<Project>
+  <!--
+    Central package versions. Every dependency is pinned here and nowhere else.
+    The app uses only the Windows App SDK and the Windows SDK build tools; the
+    test project uses only the MSTest packages and the .NET test SDK.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.5.1" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.11.1" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.11.1" />
+  </ItemGroup>
+</Project>

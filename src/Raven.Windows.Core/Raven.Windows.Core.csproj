@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    UI-free core of the Windows app: the engine contract (IRavenEngine, typed wrappers,
+    JSON envelope), the debug-only MockRaven, the raven_call() P/Invoke stub, the string
+    table, the sanitiser and small presentation rules. Plain net8.0 so its unit tests run
+    on any OS.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Raven.Windows.Core</RootNamespace>
+    <AssemblyName>Raven.Windows.Core</AssemblyName>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      The shared English strings (single source of truth: core/desktop/design/strings.en.json,
+      from the raven-core submodule).
+      WithCulture="false": without it MSBuild reads the ".en." in the file name as a culture and
+      moves the file into an "en" satellite assembly, so Loc could not find it in this assembly.
+    -->
+    <EmbeddedResource Include="..\..\core\desktop\design\strings.en.json" Link="Resources\strings.en.json" LogicalName="Raven.Strings.en.json" WithCulture="false" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <!--
+      MockRaven only (debug builds): Raven's draft 256-word security-word list, used to
+      complete words after 3 letters and to compute the check word like the engine will.
+      The real engine (raven-client) owns this list; release builds do not contain it.
+    -->
+    <EmbeddedResource Include="..\..\core\desktop\design\raven-security-words-v1.txt" Link="Mock\raven-security-words-v1.txt" LogicalName="Raven.Mock.security-words-v1.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Raven.Windows.Tests" />
+  </ItemGroup>
+
+</Project>

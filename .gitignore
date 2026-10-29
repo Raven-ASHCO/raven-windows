@@ -1,0 +1,10 @@
+# Build output of the Windows app and its tests
+bin/
+obj/
+TestResults/
+AppPackages/
+BundleArtifacts/
+*.user
+.vs/
+*.binlog
+.DS_Store

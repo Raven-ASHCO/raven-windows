@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.SecurityPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!-- Security notices (read-only; resolving stays in the terminal) and the background program's counts. -->
+    <ScrollViewer Background="{ThemeResource RavenBackgroundBrush}" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="{StaticResource RavenPageMaxWidth}" Padding="32,26,32,40" Spacing="16">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{StaticResource RavenPageTitleTextStyle}" Text="{h:Str Key=security.title}" />
+                    <TextBlock Style="{StaticResource RavenCaptionTextStyle}" Text="{h:Str Key=security.intro}" />
+                </StackPanel>
+                <ProgressRing
+                    x:Name="BusyRing"
+                    Grid.Column="1"
+                    Width="16"
+                    Height="16"
+                    IsActive="False"
+                    Visibility="Collapsed"
+                    AutomationProperties.Name="{h:Str Key=network.check.running}" />
+                <Button
+                    x:Name="RefreshButton"
+                    Grid.Column="2"
+                    Click="OnRefreshClick"
+                    AutomationProperties.Name="{h:Str Key=network.refresh}"
+                    ToolTipService.ToolTip="{h:Str Key=network.refresh}">
+                    <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                </Button>
+            </Grid>
+
+            <!-- Security notices -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=security.notices}" />
+                    <TextBlock x:Name="SecurityText" Style="{StaticResource RavenBodyTextStyle}" />
+                    <TextBlock x:Name="SecurityLabText" Style="{StaticResource RavenSmallAccentTextStyle}" TextTrimming="None" TextWrapping="Wrap" />
+                    <InfoBar x:Name="SecurityErrorBar" IsClosable="True" IsOpen="False" />
+                    <StackPanel x:Name="NoticesPanel" Spacing="12" />
+                    <TextBlock x:Name="CountedText" Style="{StaticResource RavenSecondaryTextStyle}" />
+                    <TextBlock x:Name="NodeTitle" Margin="0,8,0,0" Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=security.node.title}" />
+                    <StackPanel x:Name="NodePanel" Spacing="2" />
+                    <TextBlock x:Name="ResolveText" Style="{StaticResource RavenSmallTextStyle}" Text="{h:Str Key=security.resolve}" TextTrimming="None" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Lock and Updates are Settings sections now (Calm Settings). -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock VerticalAlignment="Center" Style="{StaticResource RavenCaptionTextStyle}" Text="{h:Str Key=security.moved}" />
+                <HyperlinkButton Padding="2,0" VerticalAlignment="Center" Click="OnOpenSettings" Content="{h:Str Key=settings.open}" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

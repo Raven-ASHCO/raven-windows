@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.WelcomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <ScrollViewer Background="{ThemeResource RavenBackgroundBrush}" VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24">
+            <StackPanel MaxWidth="460" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+
+                <Image
+                    x:Name="Logo"
+                    Width="96"
+                    Height="96"
+                    HorizontalAlignment="Center"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5"
+                    Source="ms-appx:///Assets/RavenMark.png"
+                    AutomationProperties.AccessibilityView="Raw">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="LogoScale" ScaleX="1" ScaleY="1" />
+                    </Image.RenderTransform>
+                </Image>
+
+                <!-- R A V E N wordmark (tokens: display, tracking 8) -->
+                <TextBlock x:Name="Wordmark" HorizontalAlignment="Center" Style="{StaticResource RavenDisplayTextStyle}" />
+                <TextBlock x:Name="Tagline" MinHeight="20" HorizontalAlignment="Center" TextAlignment="Center" Style="{StaticResource RavenSecondaryTextStyle}" />
+
+                <Border Margin="0,16,0,0" Style="{StaticResource RavenCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource RavenTitleTextStyle}" Text="{h:Str Key=welcome.title}" />
+                        <TextBlock Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=welcome.body1}" />
+                        <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=welcome.body2}" />
+
+                        <Grid Margin="0,4,0,0" ColumnSpacing="10" RowSpacing="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="SemiBold" Style="{StaticResource RavenBodyTextStyle}" Text="1" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=welcome.step1}" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" FontWeight="SemiBold" Style="{StaticResource RavenBodyTextStyle}" Text="2" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=welcome.step2}" />
+                            <TextBlock Grid.Row="2" Grid.Column="0" FontWeight="SemiBold" Style="{StaticResource RavenBodyTextStyle}" Text="3" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource RavenBodyTextStyle}" Text="{h:Str Key=welcome.step3}" />
+                        </Grid>
+
+                        <Button
+                            x:Name="StartButton"
+                            Margin="0,8,0,0"
+                            HorizontalAlignment="Left"
+                            Click="OnStartClick"
+                            Content="{h:Str Key=welcome.start}"
+                            Style="{StaticResource AccentButtonStyle}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.NetworkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!--
+        Network: every way from network.status (state chip, what it does and why, a switch where
+        network.set allows it), ports, router, relays, nearby, who carries mail both ways, the
+        help-friends flags and hide IP. Rows and lines are filled in code from NetworkViewModel.
+    -->
+    <ScrollViewer Background="{ThemeResource RavenBackgroundBrush}" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="{StaticResource RavenPageMaxWidth}" Padding="32,26,32,40" Spacing="16">
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{StaticResource RavenPageTitleTextStyle}" Text="{h:Str Key=nav.network}" />
+                    <TextBlock MaxWidth="560" HorizontalAlignment="Left" Style="{StaticResource RavenCaptionTextStyle}" Text="{h:Str Key=network.page.intro}" />
+                </StackPanel>
+                <ProgressRing
+                    x:Name="BusyRing"
+                    Grid.Column="1"
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Top"
+                    IsActive="False"
+                    Visibility="Collapsed"
+                    AutomationProperties.Name="{h:Str Key=network.check.running}" />
+                <Button
+                    x:Name="RefreshButton"
+                    Grid.Column="2"
+                    VerticalAlignment="Top"
+                    Click="OnRefreshClick"
+                    AutomationProperties.Name="{h:Str Key=network.refresh}"
+                    ToolTipService.ToolTip="{h:Str Key=network.refresh}">
+                    <FontIcon FontSize="14" Glyph="&#xE72C;" />
+                </Button>
+            </Grid>
+
+            <!-- Developer builds only: shown when the engine lists lab switches. -->
+            <InfoBar
+                x:Name="LabBanner"
+                IsClosable="False"
+                IsOpen="False"
+                Severity="Warning"
+                Title="{h:Str Key=network.labBanner.title}" />
+            <InfoBar x:Name="ErrorBar" IsClosable="True" IsOpen="False" />
+            <InfoBar
+                x:Name="ChangedBar"
+                Closed="OnNoticeClosed"
+                IsClosable="True"
+                IsOpen="False"
+                Severity="Success"
+                Title="{h:Str Key=network.changed}" />
+            <InfoBar
+                x:Name="RestartBar"
+                Closed="OnNoticeClosed"
+                IsClosable="True"
+                IsOpen="False" />
+            <InfoBar
+                x:Name="FirewallBar"
+                IsClosable="False"
+                IsOpen="False"
+                Severity="Informational"
+                Title="{h:Str Key=network.firewall.title}" />
+
+            <!-- This computer: the radar answers each real status check; listening, the background
+                 program, the address, ports; Check network. -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="10">
+                    <Grid ColumnSpacing="18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="64" Height="64" VerticalAlignment="Center" AutomationProperties.AccessibilityView="Raw">
+                            <Ellipse x:Name="RadarRing1" Opacity="0" RenderTransformOrigin="0.5,0.5" Style="{StaticResource RavenRadarRingStyle}">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="RadarScale1" ScaleX="1" ScaleY="1" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                            <Ellipse x:Name="RadarRing2" Opacity="0" RenderTransformOrigin="0.5,0.5" Style="{StaticResource RavenRadarRingStyle}">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="RadarScale2" ScaleX="1" ScaleY="1" />
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                            <Image Width="30" Height="30" Source="ms-appx:///Assets/RavenMark.png" />
+                        </Grid>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                            <TextBlock Style="{StaticResource RavenLabelTextStyle}" FontSize="15" Text="{h:Str Key=net.thisComputer}" />
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <ProgressRing
+                                    x:Name="StartingRing"
+                                    Width="14"
+                                    Height="14"
+                                    IsActive="False"
+                                    Visibility="Collapsed"
+                                    AutomationProperties.Name="{h:Str Key=net.starting}" />
+                                <Border x:Name="ListeningChip" Background="Transparent" Padding="0">
+                                    <TextBlock x:Name="ListeningText" Style="{StaticResource RavenCaptionTextStyle}" TextTrimming="None" TextWrapping="Wrap" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock x:Name="ProcessText" Style="{StaticResource RavenCaptionTextStyle}" />
+                            <TextBlock x:Name="AddressText" Style="{StaticResource RavenCaptionTextStyle}" />
+                            <StackPanel Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
+                                <Ellipse x:Name="NodeDot" Style="{StaticResource RavenHeartDotStyle}" AutomationProperties.AccessibilityView="Raw" />
+                                <TextBlock x:Name="NodeOkText" Style="{StaticResource RavenMetaSuccessTextStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Button
+                            x:Name="CheckButton"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Click="OnCheckClick"
+                            Content="{h:Str Key=network.check.open}"
+                            AutomationProperties.Name="{h:Str Key=network.check.title}" />
+                    </Grid>
+                    <StackPanel x:Name="ComputerPanel" Spacing="2" />
+                    <!-- LAN on for a meeting; its menu (30 min ... 24 hours) is built in code. -->
+                    <DropDownButton
+                        x:Name="LanForButton"
+                        Content="{h:Str Key=network.lanFor}"
+                        AutomationProperties.Name="{h:Str Key=network.lanFor}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Ways to reach friends: a Calm card per way, two columns when there is room -->
+            <TextBlock x:Name="WaysLabel" Margin="4,8,0,0" Style="{StaticResource RavenSectionLabelTextStyle}" />
+            <Grid x:Name="WaysPanel" ColumnSpacing="12" RowSpacing="12" SizeChanged="OnWaysSizeChanged" />
+
+            <!-- Router port opening, relays in use, the web proxy -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.router.title}" />
+                    <StackPanel x:Name="RouterPanel" Spacing="2" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.relays.title}" />
+                    <StackPanel x:Name="RelayPanel" Spacing="2" />
+                    <TextBox
+                        x:Name="RelaysBox"
+                        MinHeight="64"
+                        AcceptsReturn="True"
+                        Header="{h:Str Key=network.relays.edit}"
+                        IsSpellCheckEnabled="False"
+                        IsTextPredictionEnabled="False"
+                        TextWrapping="Wrap"
+                        AutomationProperties.Name="{h:Str Key=network.relays.edit}" />
+                    <Button
+                        x:Name="RelaysButton"
+                        Click="OnRelaysClick"
+                        Content="{h:Str Key=network.relays.use}"
+                        AutomationProperties.Name="{h:Str Key=network.relays.use}" />
+                    <TextBlock
+                        Style="{StaticResource RavenSmallTextStyle}"
+                        Text="{h:Str Key=network.relays.body}"
+                        TextTrimming="None"
+                        TextWrapping="Wrap" />
+                    <StackPanel x:Name="ProxyPanel" Margin="0,8,0,0" Spacing="2" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            x:Name="ProxyBox"
+                            Header="{h:Str Key=network.proxy.address}"
+                            IsSpellCheckEnabled="False"
+                            IsTextPredictionEnabled="False"
+                            PlaceholderText="{h:Str Key=network.proxy.example}"
+                            AutomationProperties.Name="{h:Str Key=network.proxy.address}" />
+                        <Button
+                            x:Name="ProxyButton"
+                            Grid.Column="1"
+                            VerticalAlignment="Bottom"
+                            Click="OnProxyClick"
+                            Content="{h:Str Key=network.proxy.use}"
+                            AutomationProperties.Name="{h:Str Key=network.proxy.use}" />
+                    </Grid>
+                    <TextBlock
+                        Style="{StaticResource RavenSmallTextStyle}"
+                        Text="{h:Str Key=network.proxy.noPassword}"
+                        TextTrimming="None"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Bluetooth nearby (inactive on Windows for now) -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.nearby.title}" />
+                    <TextBlock x:Name="NearbyNoteText" Style="{StaticResource RavenWarningTextStyle}" />
+                    <StackPanel x:Name="NearbyPanel" Spacing="2" />
+                </StackPanel>
+            </Border>
+
+            <!-- Who carries mail: for you, and for your friends -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.carry.title}" />
+                    <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=network.carry.forYou}" />
+                    <StackPanel x:Name="CarryMinePanel" Spacing="2" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=network.carry.forOthers}" />
+                    <ToggleSwitch
+                        x:Name="CarryForFriendsSwitch"
+                        Header="{h:Str Key=network.carry.forFriends}"
+                        OffContent=""
+                        OnContent=""
+                        Toggled="OnCarryForFriendsToggled"
+                        AutomationProperties.Name="{h:Str Key=network.carry.forFriends}" />
+                    <StackPanel x:Name="CarryForFriendsPanel" Spacing="2" />
+                    <TextBlock x:Name="LettersTitle" Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=network.carry.letters}" />
+                    <StackPanel x:Name="LettersPanel" Spacing="2" />
+                </StackPanel>
+            </Border>
+
+            <!-- The node policy flags bridge, store and relay, with what each really does -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=network.help.title}" />
+                    <StackPanel x:Name="HelpPanel" Spacing="12" />
+                    <TextBlock
+                        x:Name="HelpAutomaticText"
+                        Style="{StaticResource RavenSmallTextStyle}"
+                        Text="{h:Str Key=network.help.automatic}"
+                        TextTrimming="None"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Hide this computer's IP address from contacts -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="4">
+                    <ToggleSwitch
+                        x:Name="HideIpSwitch"
+                        Header="{h:Str Key=network.hideIp}"
+                        OffContent=""
+                        OnContent=""
+                        Toggled="OnHideIpToggled"
+                        AutomationProperties.Name="{h:Str Key=network.hideIp}" />
+                    <TextBlock Style="{StaticResource RavenSecondaryTextStyle}" Text="{h:Str Key=network.hideIp.body}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Protections (a switch where network.set allows it; else they run by themselves where their gate is open) -->
+            <TextBlock x:Name="ProtectionsLabel" Margin="4,8,0,0" Style="{StaticResource RavenSectionLabelTextStyle}" />
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel x:Name="ProtectionsPanel" Spacing="16" />
+            </Border>
+
+            <!-- About -->
+            <Border Style="{StaticResource RavenCardStyle}">
+                <StackPanel Spacing="10">
+                    <TextBlock Style="{StaticResource RavenNameTextStyle}" Text="{h:Str Key=net.about}" />
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Image Width="40" Height="40" Source="ms-appx:///Assets/RavenLogo.png" AutomationProperties.AccessibilityView="Raw" />
+                        <StackPanel VerticalAlignment="Center" Spacing="2">
+                            <TextBlock x:Name="VersionText" Style="{StaticResource RavenBodyTextStyle}" />
+                            <TextBlock x:Name="BuildText" Style="{StaticResource RavenSecondaryTextStyle}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

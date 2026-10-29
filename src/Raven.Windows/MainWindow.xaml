@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Raven.Windows.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid x:Name="Root" Background="{ThemeResource RavenBackgroundBrush}">
+        <!-- One screen at a time: Welcome, Setup, the main shell, Locked or an engine error. -->
+        <ContentControl
+            x:Name="Host"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            IsTabStop="False" />
+    </Grid>
+</Window>

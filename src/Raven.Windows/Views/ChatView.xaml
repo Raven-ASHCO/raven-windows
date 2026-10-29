@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.ChatView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!--
+        The Calm chat with one friend: the header (avatar, name, Verified, the status and path line,
+        the path pill and Routes), the route line (You, the path, the friend; packets travel on real
+        sends and receipts), the messages (day lines, bubbles, the away card), the toast and the
+        "new messages" pill, and the composer pill with the encryption line under it.
+    -->
+    <Grid Background="{ThemeResource RavenBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header. At the narrowest window (560 DIP) the status line trims first, the path pill goes
+             next, and the Routes button always shows whole (E1: at 700 px it was cut off). -->
+        <Grid
+            x:Name="HeaderGrid"
+            Grid.Row="0"
+            MinHeight="{StaticResource RavenHeaderHeight}"
+            Padding="22,10,22,10"
+            BorderBrush="{ThemeResource RavenBorderBrush}"
+            BorderThickness="0,0,0,1"
+            ColumnSpacing="12"
+            SizeChanged="OnHeaderSizeChanged">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ContentControl x:Name="HeaderAvatarHost" VerticalAlignment="Center" IsTabStop="False" />
+            <StackPanel Grid.Column="1" MinWidth="0" VerticalAlignment="Center" Spacing="1">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock x:Name="NameText" MaxWidth="260" Style="{StaticResource RavenHeaderNameTextStyle}" />
+                    <StackPanel x:Name="VerifiedBadge" VerticalAlignment="Center" Orientation="Horizontal" Spacing="4">
+                        <FontIcon x:Name="VerifiedIcon" FontSize="12" Glyph="&#xEA18;" Style="{StaticResource RavenTickIconSuccessStyle}" AutomationProperties.AccessibilityView="Raw" />
+                        <TextBlock x:Name="VerifiedText" FontWeight="SemiBold" Style="{StaticResource RavenMetaSuccessTextStyle}" />
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock x:Name="SubtitleText" FontSize="12.5" Style="{StaticResource RavenCaptionLineTextStyle}" />
+            </StackPanel>
+            <ContentControl x:Name="PathPillHost" Grid.Column="2" VerticalAlignment="Center" IsTabStop="False" />
+            <!-- The friend's routes, route hints and who carries their mail (contacts.routes). -->
+            <Button
+                x:Name="RoutesButton"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Click="OnRoutesClick">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon FontSize="13" Glyph="&#xE71B;" AutomationProperties.AccessibilityView="Raw" />
+                    <TextBlock Text="{h:Str Key=network.routes.button}" />
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Route line: You, the path, the friend. A packet travels out on send_started, the signed
+             receipt comes back on receipt, an incoming message travels in. Solid while in touch,
+             dashed otherwise. -->
+        <Grid
+            x:Name="RouteGrid"
+            Grid.Row="1"
+            Height="{StaticResource RavenRouteLineHeight}"
+            Padding="22,0"
+            BorderBrush="{ThemeResource RavenBorderBrush}"
+            BorderThickness="0,0,0,1"
+            ColumnSpacing="10"
+            AutomationProperties.AccessibilityView="Raw">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="RouteYou" Style="{StaticResource RavenMetaTextStyle}" Text="{h:Str Key=you.title}" />
+            <Grid x:Name="Track" Grid.Column="1" SizeChanged="OnTrackSizeChanged">
+                <Rectangle x:Name="TrackSolid" Style="{StaticResource RavenTrackLineStyle}" />
+                <Line
+                    x:Name="TrackDashed"
+                    X1="0"
+                    X2="0"
+                    Y1="0"
+                    Y2="0"
+                    Style="{StaticResource RavenTrackDashedStyle}"
+                    Visibility="Collapsed" />
+                <Border
+                    x:Name="RouteLabel"
+                    Padding="10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource RavenBackgroundBrush}"
+                    Visibility="Collapsed">
+                    <StackPanel x:Name="RouteLabelRow" Orientation="Horizontal" Spacing="5" />
+                </Border>
+                <Canvas x:Name="PacketCanvas" Height="14" VerticalAlignment="Center" IsHitTestVisible="False" />
+            </Grid>
+            <TextBlock x:Name="RouteFriend" Grid.Column="2" Style="{StaticResource RavenMetaTextStyle}" />
+        </Grid>
+
+        <!-- "You haven't checked this is really {name}" -->
+        <Border x:Name="VerifyBanner" Grid.Row="2" MaxWidth="{StaticResource RavenContentMaxWidth}" Margin="28,0" Style="{StaticResource RavenBannerStyle}" Visibility="Collapsed">
+            <Grid ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <FontIcon FontSize="15" Glyph="&#xEA18;" Style="{StaticResource RavenTickIconWarningStyle}" AutomationProperties.AccessibilityView="Raw" />
+                <TextBlock x:Name="VerifyText" Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource RavenCaptionPrimaryTextStyle}" />
+                <Button
+                    x:Name="CheckWordsButton"
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Click="OnCheckWords"
+                    Content="{h:Str Key=home.banner.notVerified.action}"
+                    Style="{StaticResource AccentButtonStyle}" />
+            </Grid>
+        </Border>
+
+        <ScrollViewer
+            x:Name="Scroller"
+            Grid.Row="3"
+            HorizontalScrollMode="Disabled"
+            SizeChanged="OnScrollerSizeChanged"
+            ViewChanged="OnScrollerViewChanged"
+            VerticalScrollBarVisibility="Auto">
+            <!-- One Tab stop for the whole chat (E1: every "Delivered" link was one); arrow keys move inside. -->
+            <StackPanel
+                x:Name="Messages"
+                MaxWidth="{StaticResource RavenContentMaxWidth}"
+                Padding="28,18,28,22"
+                SizeChanged="OnMessagesSizeChanged"
+                Spacing="4"
+                TabFocusNavigation="Once"
+                XYFocusKeyboardNavigation="Enabled" />
+        </ScrollViewer>
+        <TextBlock
+            x:Name="EmptyText"
+            Grid.Row="3"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Style="{StaticResource RavenSecondaryTextStyle}"
+            Visibility="Collapsed" />
+
+        <!-- Over the bottom of the messages: the "new messages" pill (only while scrolled up) and the toast. -->
+        <StackPanel
+            Grid.Row="3"
+            Margin="0,0,0,8"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Spacing="6">
+            <Button
+                x:Name="NewMessagesPill"
+                Padding="12,4"
+                HorizontalAlignment="Center"
+                Click="OnNewMessagesClick"
+                CornerRadius="14"
+                Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon FontSize="11" Glyph="&#xE74B;" AutomationProperties.AccessibilityView="Raw" />
+                    <TextBlock FontSize="12" Text="{h:Str Key=chat.newMessages}" />
+                </StackPanel>
+            </Button>
+            <Border x:Name="Toast" Opacity="0" Style="{StaticResource RavenToastStyle}" Visibility="Collapsed">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="ToastShift" />
+                </Border.RenderTransform>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <FontIcon x:Name="ToastIcon" FontSize="12" Style="{StaticResource RavenTickIconStyle}" AutomationProperties.AccessibilityView="Raw" />
+                    <TextBlock x:Name="ToastText" MaxWidth="640" Style="{StaticResource RavenMetaTextStyle}" FontSize="12" AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <InfoBar x:Name="ErrorBar" Grid.Row="4" MaxWidth="{StaticResource RavenContentMaxWidth}" Margin="22,0,22,4" IsClosable="True" IsOpen="False" />
+
+        <!-- Composer: a pill with the text box and a round send button; the encryption line under it. -->
+        <StackPanel Grid.Row="5" Padding="22,8,22,14" Spacing="6">
+            <Border x:Name="ComposerPill" MaxWidth="{StaticResource RavenContentMaxWidth}" Style="{StaticResource RavenComposerStyle}">
+                <Grid ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        x:Name="Composer"
+                        MinHeight="32"
+                        MaxHeight="120"
+                        Padding="0,6,0,6"
+                        VerticalAlignment="Center"
+                        AcceptsReturn="True"
+                        BorderThickness="0"
+                        GotFocus="OnComposerFocus"
+                        LostFocus="OnComposerBlur"
+                        PreviewKeyDown="OnComposerKeyDown"
+                        TextWrapping="Wrap">
+                        <TextBox.Resources>
+                            <SolidColorBrush x:Key="TextControlBackground" Color="Transparent" />
+                            <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="Transparent" />
+                            <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="Transparent" />
+                            <SolidColorBrush x:Key="TextControlBorderBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent" />
+                            <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent" />
+                        </TextBox.Resources>
+                    </TextBox>
+                    <Button
+                        x:Name="SendButton"
+                        Grid.Column="1"
+                        Width="{StaticResource RavenSendButtonSize}"
+                        Height="{StaticResource RavenSendButtonSize}"
+                        Padding="0"
+                        VerticalAlignment="Bottom"
+                        Click="OnSendClick"
+                        CornerRadius="17"
+                        Style="{StaticResource AccentButtonStyle}"
+                        AutomationProperties.Name="{h:Str Key=home.send}"
+                        ToolTipService.ToolTip="{h:Str Key=home.send}">
+                        <FontIcon FontSize="14" Glyph="&#xE74A;" />
+                    </Button>
+                </Grid>
+            </Border>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="6">
+                <FontIcon FontSize="11" Glyph="&#xE72E;" Foreground="{ThemeResource RavenTextTertiaryBrush}" AutomationProperties.AccessibilityView="Raw" />
+                <TextBlock x:Name="E2eText" Style="{StaticResource RavenMetaTertiaryTextStyle}" FontSize="11" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

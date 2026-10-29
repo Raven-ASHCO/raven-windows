@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Raven.Windows.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:h="using:Raven.Windows.Helpers">
+
+    <!--
+        Calm Settings: seven sections (General, Appearance, Privacy, Lock, Network, Updates, About).
+        The selection glides behind the chosen section; the old section leaves and the new one slides
+        in in the direction of travel. The sections are built in code (SettingsPage.xaml.cs) from
+        the engine's state; every change is one settings.set (or network/lock op) with only what changed.
+    -->
+    <Grid Background="{ThemeResource RavenBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="NavColumn" Width="228" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border BorderBrush="{ThemeResource RavenBorderBrush}" BorderThickness="0,0,1,0">
+            <StackPanel Padding="12,22,12,22" Spacing="14">
+                <TextBlock Margin="10,0,0,0" FontSize="22" Style="{StaticResource RavenPageTitleTextStyle}" Text="{h:Str Key=settings.title}" />
+                <Grid>
+                    <Border x:Name="Glider" Height="38" VerticalAlignment="Top" Style="{StaticResource RavenGliderStyle}" AutomationProperties.AccessibilityView="Raw">
+                        <Border.RenderTransform>
+                            <TranslateTransform x:Name="GliderShift" />
+                        </Border.RenderTransform>
+                    </Border>
+                    <!-- One Tab stop; the arrow keys move between the sections and open them. -->
+                    <StackPanel
+                        x:Name="SectionList"
+                        Spacing="2"
+                        TabFocusNavigation="Once"
+                        XYFocusKeyboardNavigation="Enabled"
+                        AutomationProperties.Name="{h:Str Key=settings.title}" />
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer x:Name="SectionScroller" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <ContentControl
+                x:Name="SectionHost"
+                MaxWidth="{StaticResource RavenSettingsMaxWidth}"
+                Padding="34,26,34,48"
+                HorizontalContentAlignment="Stretch"
+                IsTabStop="False">
+                <ContentControl.RenderTransform>
+                    <TranslateTransform x:Name="SectionShift" />
+                </ContentControl.RenderTransform>
+            </ContentControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
