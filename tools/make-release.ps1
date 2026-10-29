@@ -7,7 +7,7 @@ Run on Windows 10 or 11 (x64) with Rust (rustup, MSVC toolchain), the Visual Stu
 (C++ workload) and the .NET 8 SDK, in Windows PowerShell 5.1 or PowerShell 7, from a clone with the
 core submodule (git submodule update --init):
 
-    powershell -ExecutionPolicy Bypass -File tools\make-release.ps1 [-OutDir <folder>] [-DynamicCrt] [-NoCPathTrim]
+    powershell -ExecutionPolicy Bypass -File tools\make-release.ps1 [-OutDir <folder>] [-DynamicCrt] [-NoCPathTrim] [-AllLanguages]
 
 Steps:
   1. Raven's engine from core\node: raven_client.dll, raven-node.exe and raven-tor-helper.exe,
@@ -20,7 +20,8 @@ Steps:
   2. The app, published self-contained and unpackaged for win-x64 (.NET runtime and Windows App
      SDK runtime next to Raven.exe, no MSIX: WindowsPackageType=None and WindowsAppSDKSelfContained
      as Raven.Windows.csproj sets them), with the engine copied next to Raven.exe by the project
-     (-p:RavenEngineDir). No debug symbols (DebugType=None).
+     (-p:RavenEngineDir). No debug symbols (DebugType=None). Of the Windows App SDK's texts only
+     en-US stays: Raven is English only, so its other language folders (.mui files) are removed.
   3. Checks of the payload: every expected file is there, no MockRaven, no Bluetooth radio, no
      .pdb, the engine's binaries are x64 and need no Visual C++ runtime DLL, and no file names a
      build-machine path (the user folder or user name, CARGO_HOME, RUSTUP_HOME, the NuGet cache,
@@ -47,12 +48,16 @@ package built so needs the Visual C++ Redistributable (x64) on the computers it 
 .PARAMETER NoCPathTrim
 Don't pass /d1trimfile: (an MSVC switch that is not documented) to the C compiler, for a compiler
 that refuses it. The payload check still stops the build if a C file's path is left in a binary.
+
+.PARAMETER AllLanguages
+Keep every language folder of the Windows App SDK runtime (its .mui texts), not only en-US.
 #>
 [CmdletBinding()]
 param(
     [string]$OutDir = '',
     [switch]$DynamicCrt,
-    [switch]$NoCPathTrim
+    [switch]$NoCPathTrim,
+    [switch]$AllLanguages
 )
 
 $ErrorActionPreference = 'Stop'
@@ -271,6 +276,49 @@ try {
         "-p:RavenEngineDir=$EngineDir/", '-p:DebugType=None', '-p:DebugSymbols=false',
         "-p:PathMap=$RepoRoot\=/_/", '-o', $App)
 
+    # The Windows App SDK runtime brings its own texts in every Windows display language: one
+    # folder per language (de-DE, ja-JP, ...) of .mui files beside its DLLs. These are not .NET
+    # satellite assemblies, so SatelliteResourceLanguages=en (Directory.Build.props) leaves them in.
+    # Raven is English only and asks WinUI for en-US (Program.UseEnglish), and when a language has
+    # no .mui, Windows' resource loader falls back to the en-US one. So only en-US stays. A folder
+    # goes only if it is named like a language and holds nothing but .mui files that en-US has too.
+    $langNote = ''
+    $englishMui = @{}
+    $english = Join-Path $App 'en-US'
+    if (Test-Path -LiteralPath $english -PathType Container) {
+        Get-ChildItem -LiteralPath $english -File | Where-Object { $_.Extension -eq '.mui' } |
+            ForEach-Object { $englishMui[$_.Name.ToLowerInvariant()] = $true }
+    }
+    if ($AllLanguages) {
+        Say 'Windows App SDK texts: every language kept (-AllLanguages)'
+    } elseif ($englishMui.Count -eq 0) {
+        Warn 'No en-US .mui files next to Raven.exe: the language folders of the Windows App SDK stay.'
+    } else {
+        $dropped = 0
+        $droppedFiles = 0
+        $droppedBytes = 0.0
+        $keptOther = @()
+        foreach ($dir in @(Get-ChildItem -LiteralPath $App -Directory)) {
+            if ($dir.Name -eq 'en-US' -or $dir.Name -cnotmatch '^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$') { continue }
+            $items = @(Get-ChildItem -LiteralPath $dir.FullName -Recurse -Force)
+            $onlyMui = $items.Count -gt 0
+            foreach ($item in $items) {
+                if ($item.PSIsContainer -or $item.Extension -ne '.mui' -or -not $englishMui.ContainsKey($item.Name.ToLowerInvariant())) {
+                    $onlyMui = $false
+                    break
+                }
+            }
+            if (-not $onlyMui) { $keptOther += $dir.Name; continue }
+            $droppedBytes += ($items | Measure-Object -Property Length -Sum).Sum
+            $droppedFiles += $items.Count
+            Remove-Item -LiteralPath $dir.FullName -Recurse -Force
+            $dropped++
+        }
+        if ($dropped -gt 0) { $langNote = ', Windows App SDK texts en-US only' }
+        Say ("Windows App SDK texts: kept en-US; removed {0} other language folders ({1} files, {2:N1} MB)" -f $dropped, $droppedFiles, ($droppedBytes / 1MB))
+        if ($keptOther.Count -gt 0) { Warn ("Kept these folders named like a language, which hold more than .mui files en-US has: " + ($keptOther -join ', ')) }
+    }
+
     # --- 3. Checks ---------------------------------------------------------------------------
     Say 'Checking the payload'
     # Microsoft.ui.xaml.dll: the Windows App SDK runtime is next to Raven.exe (self-contained);
@@ -343,7 +391,7 @@ try {
         "App:  https://github.com/Raven-ASHCO/raven-windows commit $AppCommit",
         "Core: https://github.com/Raven-ASHCO/raven-core commit $CoreCommit",
         "Engine: raven_client.dll, raven-node.exe and raven-tor-helper.exe (release; raven-node features: $NodeFeatures; no Bluetooth radio); C runtime $(if ($DynamicCrt) { 'dynamic (needs the Visual C++ Redistributable)' } else { 'static' })",
-        "App: .NET 8 and Windows App SDK $AppSdk, self-contained, unpackaged; not signed",
+        "App: .NET 8 and Windows App SDK $AppSdk, self-contained, unpackaged$langNote; not signed",
         "Built with: $Rustc; .NET SDK $Dotnet",
         "Built: $([DateTime]::UtcNow.ToString('yyyy-MM-dd HH:mm')) UTC",
         '',

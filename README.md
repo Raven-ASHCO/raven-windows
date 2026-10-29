@@ -154,7 +154,10 @@ Or on GitHub: Actions > "Windows package" > Run workflow (or push a `v*` tag); t
   repository and the target folder; MSVC's `/d1trimfile:` for the C code's `__FILE__`);
 - publishes the app self-contained and unpackaged for win-x64 (`WindowsPackageType=None` and
   `WindowsAppSDKSelfContained` as the project already sets them, `--self-contained`, no debug
-  symbols), with the engine copied next to `Raven.exe` through `-p:RavenEngineDir`;
+  symbols), with the engine copied next to `Raven.exe` through `-p:RavenEngineDir`, and keeps only the
+  en-US texts of the Windows App SDK runtime: its other language folders (`de-DE\*.mui` and so on,
+  which `SatelliteResourceLanguages=en` does not cover) are removed, because Raven is English only and
+  Windows falls back to the en-US texts (`-AllLanguages` keeps them all);
 - checks the payload and stops on a problem: a missing file, MockRaven, Bluetooth radio code, a
   `.pdb`, an engine binary that is not x64 or needs a Visual C++ runtime DLL, or any file that names
   a folder of the build machine (the user folder or user name, `CARGO_HOME`, `RUSTUP_HOME`, the NuGet
@@ -454,6 +457,8 @@ would feel foreign. What changed from the earlier look, and how:
   not documented) and the payload is then free of build-machine paths; whether the Windows App SDK
   runtime needs the Visual C++ Redistributable; whether SmartScreen, the firewall prompt, the Start
   menu entry, an install over an earlier copy and the uninstall behave as `INSTALL-Windows.md` says.
+  The package keeps only the en-US `.mui` texts of the Windows App SDK; that WinUI then starts and
+  shows its own texts in English on a Windows in another display language is unverified.
 - **The app on the engine** has not been started: Setup creating a real identity (DPAPI), `node.start`
   launching `raven-node.exe` from next to `Raven.exe`, sending, and the Release engine with the platform
   stores were not run by hand. CI runs the engine tests (debug library, file-backed stores) and a smoke of

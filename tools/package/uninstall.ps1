@@ -7,7 +7,7 @@ Remove Raven for this Windows user (what install.ps1 added). No administrator ri
 It removes the app folder %LOCALAPPDATA%\Programs\Raven and the Start menu entry, nothing else.
 It never deletes your Raven data: your identity, friends and messages stay in %USERPROFILE%\.raven
 (or the folder RAVEN_DATA_DIR names), and this app's settings in %LOCALAPPDATA%\Raven. At the end
-it says where they are and how to erase them if you want that too.
+it names those of them that exist and says how to erase them if you want that too.
 
 -NoPause: don't ask or wait for Enter (for use from another script); while Raven is running it then
 stops without removing anything.
@@ -100,24 +100,45 @@ try {
         Write-Host "Raven was not installed in $dest."
     }
 
-    # The data, which stays.
+    # The data, which stays. The profile folder as Raven's engine finds it: RAVEN_DATA_DIR, else
+    # ASH_DATA_DIR, else %USERPROFILE%\.raven-ash when only that one exists, else %USERPROFILE%\.raven.
     $data = $env:RAVEN_DATA_DIR
-    if (-not $data) { $data = Join-Path $env:USERPROFILE '.raven' }
+    if (-not $data) { $data = $env:ASH_DATA_DIR }
+    if (-not $data) {
+        $data = Join-Path $env:USERPROFILE '.raven'
+        $older = Join-Path $env:USERPROFILE '.raven-ash'
+        if (-not (Test-Path -LiteralPath $data) -and (Test-Path -LiteralPath $older -PathType Container)) { $data = $older }
+    }
+    $kept = @()
+    if (Test-Path -LiteralPath $data -PathType Container) {
+        $kept += , @($data, 'your identity (its key protected by Windows for your user account), friends and messages')
+    }
     $prefs = Join-Path $env:LOCALAPPDATA 'Raven'
+    if (Test-Path -LiteralPath $prefs -PathType Container) {
+        $kept += , @($prefs, 'this app''s own settings (theme, technical details)')
+    }
     Write-Host ''
+    if ($kept.Count -eq 0) {
+        Write-Host 'No Raven data was found on this computer.'
+        Finish 0
+    }
     Write-Host 'Your Raven data was NOT deleted:'
-    Write-Host "  $data"
-    Write-Host '      your identity (its key protected by Windows for your user account), friends and messages'
-    Write-Host "  $prefs"
-    Write-Host '      this app''s own settings (theme, technical details)'
-    Write-Host 'Installing Raven again brings them back.'
+    foreach ($k in $kept) {
+        Write-Host "  $($k[0])"
+        Write-Host "      $($k[1])"
+    }
+    Write-Host 'Installing Raven again brings it back.'
     Write-Host ''
     Write-Host 'To erase your Raven identity, friends and messages from this computer (this cannot be undone;'
     Write-Host 'friends then cannot reach you here until you set Raven up again), use one of these:'
     Write-Host ' - before uninstalling: Raven > Settings > Privacy > Erase Raven from this computer, when your'
     Write-Host '   version offers it (otherwise it shows "Preview");'
     Write-Host ' - Raven''s command-line tool, if you use it: raven erase'
-    Write-Host ' - or delete the two folders above yourself, with Raven not running.'
+    if ($kept.Count -eq 1) {
+        Write-Host ' - or delete the folder above yourself, with Raven not running.'
+    } else {
+        Write-Host ' - or delete the folders above yourself, with Raven not running.'
+    }
     Finish 0
 } catch {
     Fail ("Raven was not removed completely: " + $_.Exception.Message)
