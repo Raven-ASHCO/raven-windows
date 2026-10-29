@@ -44,10 +44,17 @@ public sealed class NetworkViewModelTests
 
     // ------------------------------------------------------------------ way states
 
+    /// <summary>
+    /// A release build: LAN direct is on, and every other way and protection shows the state the
+    /// engine reports (held ones as Preview, with no switch to turn on), so the test holds whichever
+    /// ways a release opens. No lab banner.
+    /// </summary>
     [TestMethod]
-    public async Task Release_LanIsOn_EveryOtherWayIsPreview_AndNoBanner()
+    public async Task Release_LanIsOn_EveryOtherWayAsTheEngineSays_AndNoBanner()
     {
-        NetworkViewModel vm = await LoadedAsync(Release());
+        MockRaven engine = Release();
+        NetworkViewModel vm = await LoadedAsync(engine);
+        NetworkStatus reported = await engine.NetworkStatusAsync();
 
         WayRow lan = Way(vm, "lan");
         Assert.AreEqual(WayStates.On, lan.State);
@@ -59,33 +66,51 @@ public sealed class NetworkViewModelTests
         Assert.IsNotNull(lan.Detail, "the CLI's LAN row goes under Details");
 
         Assert.AreEqual(14, vm.Ways.Count, "13 ways and Tor");
-        Assert.IsNull(Way(vm, "tor").Tor, "a release build: Tor held, no state from raven-node");
+        if (reported.Tor is null)
+            Assert.IsNull(Way(vm, "tor").Tor, "no Tor state from raven-node: none shown");
         foreach (WayRow way in vm.Ways.Where(w => w.Id != "lan"))
         {
-            Assert.AreEqual(WayStates.Preview, way.State, way.Id);
-            Assert.AreEqual(Loc.Get("net.preview"), way.StateChip.Text, way.Id);
-            Assert.AreEqual(Tone.Warning, way.StateChip.Tone, way.Id);
-            Assert.IsFalse(way.SwitchEnabled, way.Id + ": a held way can't be switched on");
-            Assert.IsFalse(way.IsOn, way.Id);
+            NetworkWay? said = reported.Way(way.Id);
+            Assert.IsNotNull(said, way.Id);
+            Assert.AreEqual(said.State, way.State, way.Id);
+            Assert.AreEqual(NetworkPresenter.StateChip(said.State), way.StateChip, way.Id);
+            Assert.AreEqual(said.Reason, way.Reason, way.Id);
             Assert.IsFalse(string.IsNullOrEmpty(way.Does), way.Id);
-            Assert.AreEqual("Not in this version of Raven yet.", way.Reason, way.Id);
-            Assert.IsFalse(way.Lab, way.Id);
+            Assert.IsFalse(way.Lab, way.Id + ": a release build opens no way by a lab switch");
+            if (said.State == WayStates.Preview)
+            {
+                Assert.AreEqual(Loc.Get("net.preview"), way.StateChip.Text, way.Id);
+                Assert.AreEqual(Tone.Warning, way.StateChip.Tone, way.Id);
+                Assert.IsFalse(way.SwitchEnabled, way.Id + ": a held way can't be switched on");
+                Assert.IsFalse(way.IsOn, way.Id);
+                Assert.AreEqual("Not in this version of Raven yet.", way.Reason, way.Id);
+            }
         }
         Assert.AreEqual(6, vm.Protections.Count);
-        Assert.IsTrue(vm.Protections.All(p => !p.HasSwitch && p.State == WayStates.Preview));
+        foreach (WayRow protection in vm.Protections)
+        {
+            NetworkWay? said = reported.Way(protection.Id);
+            Assert.IsNotNull(said, protection.Id);
+            Assert.AreEqual(said.State, protection.State, protection.Id);
+            if (said.State == WayStates.Preview) Assert.IsFalse(protection.HasSwitch, protection.Id);
+        }
 
         Assert.IsFalse(vm.ShowLabBanner, "a release build never shows the banner");
         Assert.AreEqual(string.Empty, vm.LabBannerText);
         Assert.AreEqual(0, vm.FirewallLines.Count);
-        CollectionAssert.Contains(vm.ComputerLines.ToList(), Loc.Format("network.thisComputer.port", ("port", MockRaven.DemoPort)));
+        // raven-node runs: its listening line gives the port, so the profile's port is not said too (E1).
+        Assert.AreEqual("running", reported.Node);
+        CollectionAssert.DoesNotContain(vm.ComputerLines.ToList(), Loc.Format("network.thisComputer.port", ("port", MockRaven.DemoPort)));
         CollectionAssert.Contains(vm.ComputerLines.ToList(), Loc.Format("network.thisComputer.listening", ("addr", "0.0.0.0:7420")));
         CollectionAssert.Contains(vm.RelayLines.ToList(), Loc.Get("network.relays.none"));
         CollectionAssert.Contains(vm.RouterLines.ToList(), Loc.Format("network.portMapping.setting", ("setting", Loc.Get("network.value.notDecided"))));
         CollectionAssert.Contains(vm.ProxyLines.ToList(), Loc.Format("network.proxy.setting", ("setting", Loc.Get("network.proxy.auto"))));
-        CollectionAssert.Contains(vm.NearbyLines.ToList(), Loc.Get("network.nearby.state.held"));
+        if (reported.Nearby.State == "held")
+            CollectionAssert.Contains(vm.NearbyLines.ToList(), Loc.Get("network.nearby.state.held"));
         Assert.AreEqual(Loc.Format("network.carry.mine", ("setting", Loc.Get("network.value.notDecided"))), vm.CarryMineLines[0]);
         Assert.IsFalse(vm.CarryForFriendsOn);
-        Assert.IsFalse(vm.CarryForFriendsEnabled, "custody is held: carrying for friends can't be turned on");
+        if (reported.Way("custody")?.State == WayStates.Preview)
+            Assert.IsFalse(vm.CarryForFriendsEnabled, "custody is held: carrying for friends can't be turned on");
     }
 
     /// <summary>Tor: a way of its own in the Tor colour with no switch, and raven-node's state, why and outage history.</summary>

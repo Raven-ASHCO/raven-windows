@@ -28,9 +28,13 @@ public sealed class TrayMenuTests
     public void Menu_ListsStatusFriendsAndActions_InTheSharedOrder()
     {
         IReadOnlyList<TrayMenuItem> items = TrayMenu.Build(Listening(), nodeDown: false, ready: true, Friends(), privacyAvailable: false, Now);
+        // The first line asks this computer whether it is on Wi-Fi (a CI runner is on a cable):
+        // StatusLines_SayWhatRavenKnows covers both wordings.
+        string listening = TrayMenu.StatusLine(Listening());
+        CollectionAssert.Contains(new[] { "Raven is listening on Wi-Fi", "Raven is listening on your network" }, listening);
         CollectionAssert.AreEqual(new[]
         {
-            "Raven is listening on Wi-Fi",
+            listening,
             "♥ background program ok",
             "Ali · In touch 5 min ago",
             "2 new from Rena",

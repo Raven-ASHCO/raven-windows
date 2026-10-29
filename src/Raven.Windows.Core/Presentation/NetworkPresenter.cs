@@ -270,6 +270,7 @@ public static class PathPresenter
             PathKinds.Friend => Loc.Get("network.path.friend"),
             PathKinds.Handoff => Loc.Get("network.path.handoff"),
             PathKinds.Letter => Loc.Get("network.path.letter"),
+            PathKinds.Onion => Loc.Get("network.path.onion"),
             _ => null,
         };
         if (known is not null) return known;
