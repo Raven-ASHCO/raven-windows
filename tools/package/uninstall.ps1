@@ -110,7 +110,8 @@ try {
         if (-not (Test-Path -LiteralPath $data) -and (Test-Path -LiteralPath $older -PathType Container)) { $data = $older }
     }
     $kept = @()
-    if (Test-Path -LiteralPath $data -PathType Container) {
+    $hasProfile = Test-Path -LiteralPath $data -PathType Container
+    if ($hasProfile) {
         $kept += , @($data, 'your identity (its key protected by Windows for your user account), friends and messages')
     }
     $prefs = Join-Path $env:LOCALAPPDATA 'Raven'
@@ -129,6 +130,10 @@ try {
     }
     Write-Host 'Installing Raven again brings it back.'
     Write-Host ''
+    if (-not $hasProfile) {
+        Write-Host 'To remove it too, delete the folder above yourself.'
+        Finish 0
+    }
     Write-Host 'To erase your Raven identity, friends and messages from this computer (this cannot be undone;'
     Write-Host 'friends then cannot reach you here until you set Raven up again), use one of these:'
     Write-Host ' - before uninstalling: Raven > Settings > Privacy > Erase Raven from this computer, when your'
