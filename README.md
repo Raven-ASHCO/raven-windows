@@ -16,18 +16,20 @@ cd raven-windows
 git submodule update --init
 ```
 
-> **Status: in development. A downloadable package is prepared, but not built or released yet: it
-> waits for the raven-core release.** `tools/make-release.ps1` (on Windows, or the "Windows package"
-> workflow on GitHub's Windows runner) makes `Raven-windows-x64-<version>.zip`: self-contained,
-> installed per user by a script, **not signed** (see "Install from the zip"). It is meant to ship
-> with the raven-core release that turns on the field-tested ways to reach friends (Tor, Internet
-> direct and the others; Bluetooth stays Mac only); until the `core` submodule points at that
-> release, a package built from here has the current submodule's engine, where only direct messaging
-> on the local network is on and every other way is a lab feature that stays off (see
-> `core/README.md`). CI (`.github/workflows/windows.yml`) builds Raven's engine, the app and the
-> tests, and runs them (including the engine tests); neither the app nor the package has been tried
-> by hand on Windows yet (see "Unverified" below). The Calm restyle (the approved Calm design, with
-> groups in the lab and Settings in seven sections) has not been compiled on a Windows machine yet.
+> **Status: in development, version 0.1.0, not independently reviewed, not released yet.**
+> `tools/make-release.ps1` (on Windows, or the "Windows package" workflow on GitHub's Windows
+> runner) makes `Raven-windows-x64-<version>.zip`: self-contained, installed per user by a script,
+> **not signed** (see "Install from the zip"). The `core` submodule is raven-core 0.1.0, whose
+> release engine has the field-tested ways to reach friends switched on (see `core/README.md`):
+> friends on the same network are reached directly, and friends on other networks through Tor by
+> default (the first Tor start can take a minute or two), or directly once one of you turns on
+> Internet direct or peer-to-peer listening (Windows Firewall may then ask about raven-node again);
+> friends keep sealed mail for each other, and groups are on. Raven for Windows has no Bluetooth
+> (that is Mac only), and a card's Internet and peer-to-peer addresses are left out (nothing signs
+> them; Add a friend says so). CI (`.github/workflows/windows.yml`) builds Raven's engine, the app
+> and the tests, and runs them (including the engine tests); the package was built once on Windows
+> 11, with the core before 0.1.0, and installed and removed there, but the app has not been tried by
+> hand yet (see "Unverified" below).
 
 ## Layout
 
@@ -191,6 +193,11 @@ trusted signature, and there is no code-signing certificate yet.
   Sending to someone not in touch: it waits (24 h).
 - **Trying Add a friend:** paste any invite of the mock format, for example
   `raven:rvn1qnewfriendaddress0123456789abcdefgh:00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff@192.168.1.50:7420`.
+  A card in lines (`RAVEN CARD v1`, `address=rvn1...`, optionally `lan=`, `inet=`, `p2p=`) with an
+  `inet=` or `p2p=` line answers as a 0.1.0 release engine does: those routes are left out
+  (`ignored_routes`), with the engine's `note`, and the dialog shows `add.paste.ignoredRoutes`
+  under the card's summary (the engine's own words under Technical details); `--mock-lab` reads
+  them as routes, like a debug build with `RAVEN_LAB_TEST_A=1`.
 - **Trying Check words** (the app never shows a friend's words; these are demo data):
   Rena's words are `river lime cactus eagle harp potato puzzle elephant fish bracelet` → match.
   Swap two of them or mishear one → "one word doesn't fit" (typo). Type your own words → mismatch.
@@ -200,7 +207,9 @@ trusted signature, and there is no code-signing certificate yet.
   (Rena is verified, as with the words); anything else → mismatch. Like the engine, the mock ignores
   spaces, separators and invisible characters, folds Persian, Arabic-Indic and full-width digits,
   and compares case-sensitively. Other friends have no old code in the mock (always mismatch).
-- **Network** (`Mock/MockRaven.Network.cs`): by default a release build's answers (API.md, "Mocks"):
+- **Network** (`Mock/MockRaven.Network.cs`): by default a release build's answers as API.md "Mocks"
+  describes them, which is still the state before version 0.1.0 (the real 0.1.0 release engine
+  reports Tor, Internet direct, peer-to-peer and the other field-tested ways on):
   LAN direct on, every other way `preview`, a held way refused with `NOT_AVAILABLE_YET`, Lock v2,
   security notices and updates not in this version. `--mock-lab` (tests: `labNetwork: true`) answers
   as a developer build with `RAVEN_LAB_TEST_A`, `..._FRIEND_RELAY`, `..._CUSTODY_HANDOFF`,
@@ -414,8 +423,8 @@ would feel foreign. What changed from the earlier look, and how:
 
 ## Unverified (could not be checked on the Mac this was written on)
 
-- **The Calm restyle (2026-10-28) was never compiled or run.** Written on a Mac without .NET: no
-  build, no test run, no screenshots. It was checked by reading, by an independent read-only review
+- **The Calm restyle (2026-10-28) was never run.** Written on a Mac without .NET; since then it
+  was compiled on Windows (CI, and the Release build of the package), but no screenshots. It was checked by reading, by an independent read-only review
   for compile errors (two found and fixed: `Grid.SetColumn` on a `UIElement`, an `x:Double` resource
   given to `ColumnDefinition.Width`), by `xmllint` on every XAML file and by scripts (brackets,
   `using`s, every style/ThemeResource key in every theme, every `x:Name` the code-behind uses, the
@@ -448,17 +457,16 @@ would feel foreign. What changed from the earlier look, and how:
   `MenuFlyout`, `InfoBar.Closed`, `InfoBar.ActionButton` set in code, `PasswordBox`, `CheckBox`
   lists in a `ContentDialog`.
 
-- **The package has never been built or installed.** `tools/make-release.ps1`, `tools/package/*.ps1`
-  and `.github/workflows/package.yml` were written on a Mac without PowerShell or Windows: checked by
-  reading and by scripts (strings, brackets and comments of the PowerShell files, ASCII only, the
-  workflow parsed as YAML), not run. Only a Windows run shows whether `dotnet publish` of this WinUI
-  project self-contained (.NET 8 SDK, Windows App SDK 2.5.1) puts the `.pri` and XAML files next to
-  `Raven.exe`; whether the engine builds with `+crt-static` and `/d1trimfile:` (an MSVC switch that is
-  not documented) and the payload is then free of build-machine paths; whether the Windows App SDK
-  runtime needs the Visual C++ Redistributable; whether SmartScreen, the firewall prompt, the Start
-  menu entry, an install over an earlier copy and the uninstall behave as `INSTALL-Windows.md` says.
-  The package keeps only the en-US `.mui` texts of the Windows App SDK; that WinUI then starts and
-  shows its own texts in English on a Windows in another display language is unverified.
+- **The package was built and installed once, and never run.** `tools/make-release.ps1`,
+  `tools/package/*.ps1` and `.github/workflows/package.yml` were written on a Mac without PowerShell
+  or Windows. One run on Windows 11 (.NET SDK 8.0.420), with the core before 0.1.0, built the
+  package (the engine with `+crt-static` and `/d1trimfile:`, the payload free of build-machine
+  paths, 527 files, a 115 MB zip), and `install.ps1` and `uninstall.ps1` (with `-NoPause`) worked;
+  Raven was not started from it. Not checked yet: the workflow on GitHub's runner; a package with
+  core 0.1.0; the en-US-only Windows App SDK texts (added after that run: that WinUI starts and shows
+  its own texts in English on a Windows in another display language); whether the Windows App SDK
+  runtime needs the Visual C++ Redistributable on a clean PC; SmartScreen, the firewall prompts, the
+  Start menu entry and an install over an earlier copy as `INSTALL-Windows.md` describes them.
 - **The app on the engine** has not been started: Setup creating a real identity (DPAPI), `node.start`
   launching `raven-node.exe` from next to `Raven.exe`, sending, and the Release engine with the platform
   stores were not run by hand. CI runs the engine tests (debug library, file-backed stores) and a smoke of

@@ -73,6 +73,16 @@ Smart App Control off just for Raven.
 4. It shows your security words. Compare them with a friend's (in person or on a call) to verify
    each other.
 
+**Friends on other networks.** Your friends do not need to be on your network. On the same Wi-Fi or
+office network Raven connects directly; between different networks it goes through Tor, which is
+slower but works from most places. The first time, Tor can take a minute or two to start (sometimes
+longer); until then messages to friends elsewhere wait and go out by themselves. Raven's Network
+page shows how far Tor is.
+
+**Adding a friend from a card.** If your friend's card also lists internet addresses, Raven leaves
+them out and says so under the card: nothing signs the addresses in a card. Once you are connected
+(over Tor or your local network), your friend's addresses reach you inside your encrypted link.
+
 ## 6. The Windows Firewall prompt (raven-node)
 
 When raven-node starts listening, Windows may show **Windows Security Alert: Windows Defender
@@ -97,8 +107,14 @@ network cannot reach you directly. To fix it: Windows Security > Firewall & netw
 **Allow an app through firewall** > **Change settings** > tick **Private** next to raven-node > OK
 (an administrator must confirm).
 
-**Tor.** To reach friends who are not on your network, Raven can use Tor, a network that hides
-where you are. Its helper program, `raven-tor-helper`, only makes outgoing connections and talks to
+**Windows may ask again later.** Internet direct and peer-to-peer listening stay off until you turn
+them on (Raven's Network page). When you turn one on, Raven asks to restart its background program,
+which then listens on another port, and Windows may ask about raven-node again: answer the same way,
+Private networks only. The Network page names the ports. With listening off, friends on other
+networks still reach you through Tor.
+
+**Tor.** To reach friends who are not on your network, Raven uses Tor (on by default), a network
+that hides where you are. Its helper program, `raven-tor-helper`, only makes outgoing connections and talks to
 raven-node on this PC alone, so Windows normally does not ask about it. If another firewall program
 asks about raven-tor-helper, allow it, or Raven cannot use Tor.
 
