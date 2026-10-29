@@ -8,3 +8,6 @@ BundleArtifacts/
 .vs/
 *.binlog
 .DS_Store
+
+# Packages made by tools/make-release.ps1
+dist/

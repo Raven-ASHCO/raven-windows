@@ -16,13 +16,18 @@ cd raven-windows
 git submodule update --init
 ```
 
-> **Status: in development, built and tested in CI only.** There is no installer, no signed build and
-> nothing to download yet. CI (`.github/workflows/windows.yml`) builds Raven's engine, the app and the
-> tests, and runs them (including the engine tests); the app has not been tried by hand on Windows yet
-> (see "Unverified" below). The app uses whatever the engine allows: in a release engine only direct
-> messaging on the local network is on, and every other way to reach friends is a lab feature that
-> stays off (see `core/README.md`). The Calm restyle (the approved Calm design, with groups in the lab
-> and Settings in seven sections) has not been compiled on a Windows machine yet.
+> **Status: in development. A downloadable package is prepared, but not built or released yet: it
+> waits for the raven-core release.** `tools/make-release.ps1` (on Windows, or the "Windows package"
+> workflow on GitHub's Windows runner) makes `Raven-windows-x64-<version>.zip`: self-contained,
+> installed per user by a script, **not signed** (see "Install from the zip"). It is meant to ship
+> with the raven-core release that turns on the field-tested ways to reach friends (Tor, Internet
+> direct and the others; Bluetooth stays Mac only); until the `core` submodule points at that
+> release, a package built from here has the current submodule's engine, where only direct messaging
+> on the local network is on and every other way is a lab feature that stays off (see
+> `core/README.md`). CI (`.github/workflows/windows.yml`) builds Raven's engine, the app and the
+> tests, and runs them (including the engine tests); neither the app nor the package has been tried
+> by hand on Windows yet (see "Unverified" below). The Calm restyle (the approved Calm design, with
+> groups in the lab and Settings in seven sections) has not been compiled on a Windows machine yet.
 
 ## Layout
 
@@ -37,6 +42,10 @@ git submodule update --init
 | `src/Raven.Windows/Themes/` | `Light.xaml`, `Dark.xaml` (colours from `tokens.json`), `Raven.xaml` (theme dictionaries incl. high contrast, spacing, radii, layout, Segoe UI Variable / Cascadia Mono type, named styles) |
 | `src/Raven.Windows/Assets/` | From `core/desktop/design/assets/`: `RavenMark.png` (= raven-mark-1024), `RavenLogo.png` (= raven-logo-192); generated from them: `Raven.ico` (app/window), `RavenTray.ico` (tray), MSIX tiles; `RavenTrayDim1.ico` / `RavenTrayDim2.ico` (the tray's breathing frames, 80% and 60%, made by `tools/make-tray-frames.py`) |
 | `tools/make-tray-frames.py` | Makes the breathing frames from `RavenTray.ico` (Python standard library only) |
+| `tools/make-release.ps1` | Builds the downloadable package, `Raven-windows-x64-<version>.zip` and its `.sha256` (see "Install from the zip") |
+| `tools/package/` | `install.ps1` and `uninstall.ps1`, the per-user install and removal that go into the zip |
+| `INSTALL-Windows.md` | The install guide for people who never installed an unsigned app (also in the zip) |
+| `.github/workflows/package.yml` | Builds the package on GitHub's Windows runner (run by hand, or on a `v*` tag) and keeps the zip and the `.sha256` as an artifact |
 | `tests/Raven.Windows.Tests/` | MSTest: the real engine (`EngineTests`: `raven_client.dll` on a throwaway profile, incl. the Network, Check and Security view models), the engine wrapper without its library, MockRaven (incl. the privacy operations, error texts and the network ops in release and lab mode), the Network screens' view models (`NetworkViewModelTests`, `NetworkScreensTests`: every way state, consent, restart, NOT_AVAILABLE_YET / CONSENT_NEEDED, Lock v2, routes), path chips and network presenters, verify words and old code (match / typo / mismatch, groups of four, the old-code intro), string keys, sanitiser, envelope, background engine, app id, theme tokens, presenters and time phrases, the tray menu and breathing |
 
 ## Build and run (Windows 10 1809+ / Windows 11)
@@ -61,13 +70,15 @@ $app = ".\src\Raven.Windows\bin\x64\Debug\net8.0-windows10.0.19041.0\win-x64\Rav
 dotnet test tests\Raven.Windows.Tests\Raven.Windows.Tests.csproj
 ```
 
-- **The engine next to Raven.exe.** `Raven.Windows.csproj` copies `raven_client.dll` and `raven-node.exe` from
+- **The engine next to Raven.exe.** `Raven.Windows.csproj` copies `raven_client.dll`, `raven-node.exe` and
+  `raven-tor-helper.exe` (Tor; built only with `--features raven-node/tor`) from
   `core\node\target\release\` (ARM64: `core\node\target\aarch64-pc-windows-msvc\release\`, x86:
   `core\node\target\i686-pc-windows-msvc\release\`; another folder: `-p:RavenEngineDir=<folder>\`) when they
   exist. `RavenClientEngine` loads the library only from its own folder and the safe system folders (never
   the current directory or PATH); without it, or with one of another architecture, every call answers
   `NOT_INITIALIZED` and the app opens on its error screen. The engine starts `raven-node.exe` from next to
-  `Raven.exe` (or `RAVEN_NODE_BIN`) when the app needs the background program. The engine uses the CLI's
+  `Raven.exe` (or `RAVEN_NODE_BIN`) when the app needs the background program, and raven-node starts
+  `raven-tor-helper.exe` from its own folder, so the three stay together. The engine uses the CLI's
   profile, so the app, `raven` and `ash` share one identity and one friends list; a run without
   `RAVEN_DATA_DIR` opens your real profile, exactly as the CLI does.
 - **Engine tests.** `EngineTests` call the real `raven_client.dll` with a throwaway profile
@@ -93,6 +104,70 @@ dotnet test tests\Raven.Windows.Tests\Raven.Windows.Tests.csproj
 - The tests (`net8.0`) also run on macOS and Linux: `dotnet test tests/Raven.Windows.Tests` (the engine
   tests need Windows and are skipped there).
 - Without `-p:Platform=...` the app project defaults to x64 (WinUI has no AnyCPU build).
+
+## Install from the zip
+
+The package is `Raven-windows-x64-<version>.zip`, with `Raven-windows-x64-<version>.zip.sha256` next
+to it. The step-by-step guide for people who never installed an unsigned app is
+[`INSTALL-Windows.md`](INSTALL-Windows.md) (also in the zip). In short:
+
+1. Check the SHA-256 (one PowerShell line in the guide), then unzip (Extract All).
+2. Right-click `install.ps1` > Run with PowerShell (or `powershell -ExecutionPolicy Bypass -File
+   .\install.ps1`). It copies `Raven\` to `%LOCALAPPDATA%\Programs\Raven` and adds Raven to the Start
+   menu: no administrator rights, no registry entries, no service, no firewall rule.
+3. First start: SmartScreen says "Windows protected your PC" (the app is not signed): More info >
+   Run anyway. When Windows Firewall asks about raven-node: Private networks only, Allow access.
+4. To remove it: right-click the tray icon > Quit and stop the background program, then run
+   `uninstall.ps1` in `%LOCALAPPDATA%\Programs\Raven`. It removes the app and the Start menu entry and
+   never deletes Raven's data (`%USERPROFILE%\.raven`); it says where that is and how to erase it.
+
+What the zip holds:
+
+| Path | What |
+|---|---|
+| `Raven\Raven.exe` | The app, with the .NET 8 and Windows App SDK runtimes next to it (self-contained, unpackaged: nothing else to install, no MSIX) |
+| `Raven\raven_client.dll` | Raven's engine (release build) |
+| `Raven\raven-node.exe` | The background program. The engine starts the one `RAVEN_NODE_BIN` names, else the one next to `Raven.exe` (its own lookup, `core/node/crates/raven-client/src/node.rs`), so the app needs no setting for it |
+| `Raven\raven-tor-helper.exe` | Tor (Arti), which raven-node starts from its own folder |
+| `Raven\BUILD-INFO.txt`, `LICENSE`, `NOTICE` | The app and core commits it was built from, and the license |
+| `install.ps1`, `uninstall.ps1`, `INSTALL-Windows.md` | Per-user install and removal (`tools/package/`) and the guide |
+
+There is no Bluetooth in it: raven-node is built without `nearby-radio`, so there is no nearby radio
+and no `raven-nearby-helper`, and the build stops if Bluetooth radio code turns up in the engine.
+
+**Making the package** (Windows 10/11 x64 with Rust and its MSVC toolchain, the Visual Studio Build
+Tools with C++, the .NET 8 SDK and Git; Windows PowerShell 5.1 or PowerShell 7):
+
+```powershell
+git clone --recurse-submodules https://github.com/Raven-ASHCO/raven-windows.git
+cd raven-windows
+powershell -ExecutionPolicy Bypass -File tools\make-release.ps1   # dist\Raven-windows-x64-<version>.zip + .sha256
+```
+
+Or on GitHub: Actions > "Windows package" > Run workflow (or push a `v*` tag); the zip and the
+`.sha256` come as the artifact `Raven-windows-x64`. `tools/make-release.ps1`:
+
+- builds the engine with `cargo build --release --locked --target x86_64-pc-windows-msvc
+  -p raven-client -p raven-node --features raven-node/tor`, with the C runtime linked statically
+  (`+crt-static`: nothing needs `vcruntime140.dll`; `-DynamicCrt` turns that off) and build-machine
+  paths rewritten (`--remap-path-prefix` for the user folder, `CARGO_HOME`, `RUSTUP_HOME`, the
+  repository and the target folder; MSVC's `/d1trimfile:` for the C code's `__FILE__`);
+- publishes the app self-contained and unpackaged for win-x64 (`WindowsPackageType=None` and
+  `WindowsAppSDKSelfContained` as the project already sets them, `--self-contained`, no debug
+  symbols), with the engine copied next to `Raven.exe` through `-p:RavenEngineDir`;
+- checks the payload and stops on a problem: a missing file, MockRaven, Bluetooth radio code, a
+  `.pdb`, an engine binary that is not x64 or needs a Visual C++ runtime DLL, or any file that names
+  a folder of the build machine (the user folder or user name, `CARGO_HOME`, `RUSTUP_HOME`, the NuGet
+  cache, `TEMP`, the repository); it warns when another file needs a Visual C++ runtime DLL the
+  package does not carry;
+- writes the zip and `<zip>.sha256` (`<hash>  <name>`); the work folder with the release `Raven.exe`
+  is removed afterwards. It runs no Raven program.
+
+The version is `<Version>` in `Directory.Build.props` (a `v*` tag must match it). The engine comes
+from the raven-core commit that the `core` submodule points to: to package another raven-core, move
+the submodule (`git -C core checkout <commit>`, `git add core`, commit) and build again;
+`BUILD-INFO.txt` names both commits. The MSIX option stays for later: an MSIX installs only with a
+trusted signature, and there is no code-signing certificate yet.
 
 ## What is mocked
 
@@ -370,13 +445,21 @@ would feel foreign. What changed from the earlier look, and how:
   `MenuFlyout`, `InfoBar.Closed`, `InfoBar.ActionButton` set in code, `PasswordBox`, `CheckBox`
   lists in a `ContentDialog`.
 
+- **The package has never been built or installed.** `tools/make-release.ps1`, `tools/package/*.ps1`
+  and `.github/workflows/package.yml` were written on a Mac without PowerShell or Windows: checked by
+  reading and by scripts (strings, brackets and comments of the PowerShell files, ASCII only, the
+  workflow parsed as YAML), not run. Only a Windows run shows whether `dotnet publish` of this WinUI
+  project self-contained (.NET 8 SDK, Windows App SDK 2.5.1) puts the `.pri` and XAML files next to
+  `Raven.exe`; whether the engine builds with `+crt-static` and `/d1trimfile:` (an MSVC switch that is
+  not documented) and the payload is then free of build-machine paths; whether the Windows App SDK
+  runtime needs the Visual C++ Redistributable; whether SmartScreen, the firewall prompt, the Start
+  menu entry, an install over an earlier copy and the uninstall behave as `INSTALL-Windows.md` says.
 - **The app on the engine** has not been started: Setup creating a real identity (DPAPI), `node.start`
   launching `raven-node.exe` from next to `Raven.exe`, sending, and the Release engine with the platform
   stores were not run by hand. CI runs the engine tests (debug library, file-backed stores) and a smoke of
   the Release library (`app.info`, `profile.state`, `BAD_REQUEST`, and its refusal of the file-backed
-  test stores). `raven_client.dll` and
-  `raven-node.exe` link the MSVC C runtime dynamically (`vcruntime140.dll`): an installer must make sure it
-  is present (or the engine must be built with a static C runtime).
+  test stores). A plain `cargo build` links `raven_client.dll` and `raven-node.exe` against the MSVC C
+  runtime DLLs (`vcruntime140.dll`); the package (`tools/make-release.ps1`) links it statically.
 - The reload after an `events.poll` `reset` (the engine dropped events from its bounded buffer:
   `RavenSession.Resynced`, then `ShellPage` reads the node status, the friends and the open chat again)
   has not run; nothing in the tests makes the engine drop events.
@@ -429,8 +512,11 @@ would feel foreign. What changed from the earlier look, and how:
 - `core/desktop/design/strings.en.json`, `tokens.json` and the draft word list are build inputs, and
   `core/desktop/README.md` holds the app id the tests check: updating the `core/` submodule can change
   them. Dependabot does not watch NuGet.
-- Code signing, installer, auto-start of the app with Windows, and toast notifications are not
-  done.
+- Code signing is not done: the zip and the app are unsigned, so SmartScreen warns, and a PC with
+  Smart App Control on refuses Raven. Also not done: an entry in Settings > Apps (install.ps1 adds
+  only the Start menu entry), the AppUserModelID on the Start menu shortcut (a Raven pinned from the
+  Start menu may get a taskbar button of its own), the third-party license notices of the engine's
+  crates in the zip, auto-start of the app with Windows, and toast notifications.
 
 ## License
 

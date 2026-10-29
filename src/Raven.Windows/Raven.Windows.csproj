@@ -49,12 +49,14 @@
   </ItemGroup>
 
   <!--
-    Raven's engine next to Raven.exe: raven_client.dll (the app calls it, RavenClientEngine) and
-    raven-node.exe (the background program the engine starts), from a release build of the
-    crates raven-client and raven-node in core/node/ (x64: core\node\target\release; ARM64 and x86: the
-    release folder of that Rust target), copied when present. Without them the app still
+    Raven's engine next to Raven.exe: raven_client.dll (the app calls it, RavenClientEngine),
+    raven-node.exe (the background program the engine starts: RAVEN_NODE_BIN when set, else the
+    one next to Raven.exe) and raven-tor-helper.exe (Tor, which raven-node starts from its own
+    folder; built only with the raven-node/tor feature), from a release build of the crates
+    raven-client and raven-node in core/node/ (x64: core\node\target\release; ARM64 and x86: the
+    release folder of that Rust target), each copied when present. Without them the app still
     builds and opens on "this build doesn't include its engine". Another folder:
-    -p:RavenEngineDir=<folder>\
+    -p:RavenEngineDir=<folder>\ (tools/make-release.ps1 uses that).
   -->
   <PropertyGroup Condition="'$(RavenEngineDir)' == ''">
     <RavenNodeTarget>$(MSBuildThisFileDirectory)..\..\core\node\target\</RavenNodeTarget>
@@ -65,6 +67,7 @@
   <ItemGroup>
     <Content Include="$(RavenEngineDir)raven_client.dll" Link="raven_client.dll" Condition="Exists('$(RavenEngineDir)raven_client.dll')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
     <Content Include="$(RavenEngineDir)raven-node.exe" Link="raven-node.exe" Condition="Exists('$(RavenEngineDir)raven-node.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+    <Content Include="$(RavenEngineDir)raven-tor-helper.exe" Link="raven-tor-helper.exe" Condition="Exists('$(RavenEngineDir)raven-tor-helper.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
   </ItemGroup>
 
   <!-- Visual Studio: offer the MSIX "Package and Publish" menu. -->
