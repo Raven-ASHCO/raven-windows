@@ -1,0 +1,126 @@
+# Raven for Windows: the downloadable package. tools/make-release.ps1 builds the release engine
+# (raven_client.dll, raven-node.exe and raven-tor-helper.exe from the raven-core submodule at
+# core/, with the C runtime linked statically and no Bluetooth radio), publishes the app
+# self-contained and unpackaged for win-x64, checks the payload (expected files, no MockRaven, no
+# Bluetooth radio, no Visual C++ runtime DLL needed by the engine, no build-machine paths) and writes
+# Raven-windows-x64-<version>.zip and its .sha256. Then the release engine inside the zip is tried
+# on a throwaway profile, as windows.yml does with the library it builds, and the zip and the
+# .sha256 are kept as the artifact "Raven-windows-x64". Nothing is published or signed here.
+#
+# Runs by hand (Actions > Windows package > Run workflow) and on tags v*; a tag must match
+# <Version> in Directory.Build.props.
+name: Windows package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+# Least privilege: read the code, nothing else. No secrets: raven-core is public, so the workflow's
+# own token fetches the submodule. Third-party actions pinned to full commit SHAs (the comment names
+# the release), as in windows.yml.
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-package-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  RUST_TOOLCHAIN: "1.98.0"
+  CARGO_TERM_COLOR: always
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "1"
+
+jobs:
+  package:
+    name: Raven-windows-x64 zip
+    runs-on: windows-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de # master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: "8.0.x"
+
+      # A release tag names the version the app already carries.
+      - name: Tag matches the app version
+        if: github.ref_type == 'tag'
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          [xml]$props = Get-Content -LiteralPath Directory.Build.props -Raw
+          $version = "$($props.Project.PropertyGroup.Version)".Trim()
+          if ($env:TAG -ne "v$version") { throw "tag $env:TAG does not match <Version>$version</Version> in Directory.Build.props" }
+          "tag $env:TAG = version $version"
+
+      # No build cache: the package is built from the checked-out sources only.
+      - name: Build the package
+        run: ./tools/make-release.ps1 -OutDir dist
+
+      # The engine in the zip, on its own: a release engine for Windows that answers on an empty
+      # throwaway profile (nothing is created), and raven-node starts and prints its help.
+      - name: Try the packaged engine
+        run: |
+          $zip = Get-ChildItem dist -Filter 'Raven-windows-x64-*.zip' | Select-Object -First 1
+          if ($null -eq $zip) { throw "no zip in dist" }
+          $hashLine = (Get-Content -LiteralPath "$($zip.FullName).sha256" -Raw).Trim()
+          $expected = ($hashLine -split '\s+')[0]
+          if ((Get-FileHash -LiteralPath $zip.FullName -Algorithm SHA256).Hash -ne $expected) { throw "the .sha256 does not match the zip" }
+          $out = Join-Path $env:RUNNER_TEMP 'raven-package'
+          Expand-Archive -LiteralPath $zip.FullName -DestinationPath $out -Force
+          foreach ($f in 'install.ps1', 'uninstall.ps1', 'INSTALL-Windows.md', 'Raven\Raven.exe', 'Raven\raven_client.dll', 'Raven\raven-node.exe', 'Raven\raven-tor-helper.exe', 'Raven\BUILD-INFO.txt') {
+            if (-not (Test-Path -LiteralPath (Join-Path $out $f))) { throw "$f is missing in the zip" }
+          }
+          Get-Content -LiteralPath (Join-Path $out 'Raven\BUILD-INFO.txt')
+          $dll = (Resolve-Path (Join-Path $out 'Raven\raven_client.dll')).Path
+          $source = @"
+          using System;
+          using System.Runtime.InteropServices;
+          public static class RavenPackageSmoke
+          {
+              [DllImport(@"$dll", CallingConvention = CallingConvention.Cdecl)]
+              private static extern IntPtr raven_call([MarshalAs(UnmanagedType.LPUTF8Str)] string request);
+              [DllImport(@"$dll", CallingConvention = CallingConvention.Cdecl)]
+              private static extern void raven_free(IntPtr response);
+              public static string Call(string request)
+              {
+                  IntPtr p = raven_call(request);
+                  try { return Marshal.PtrToStringUTF8(p); } finally { raven_free(p); }
+              }
+          }
+          "@
+          Add-Type -TypeDefinition $source
+          $env:RAVEN_DATA_DIR = Join-Path $env:RUNNER_TEMP "raven-package-smoke\profile"
+          $info = [RavenPackageSmoke]::Call('{"v":1,"op":"app.info","args":{}}') | ConvertFrom-Json
+          $state = [RavenPackageSmoke]::Call('{"v":1,"op":"profile.state","args":{}}') | ConvertFrom-Json
+          "app.info: $($info | ConvertTo-Json -Compress -Depth 5)"
+          "profile.state: $($state | ConvertTo-Json -Compress -Depth 5)"
+          if (-not $info.ok -or $info.result.build -ne "release" -or $info.result.platform -ne "windows") { throw "the packaged engine is not a release engine for Windows" }
+          if (-not $state.ok -or $state.result.state -ne "new") { throw "profile.state of an empty profile is not new" }
+          $help = & (Join-Path $out 'Raven\raven-node.exe') --help
+          $code = $LASTEXITCODE
+          $help | Select-Object -First 5
+          if ($code -ne 0) { throw "raven-node.exe --help failed ($code)" }
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: Raven-windows-x64
+          path: |
+            dist/Raven-windows-x64-*.zip
+            dist/Raven-windows-x64-*.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
