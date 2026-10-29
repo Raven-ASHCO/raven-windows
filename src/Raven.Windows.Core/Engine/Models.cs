@@ -301,6 +301,13 @@ public sealed class CardParsed
     [JsonPropertyName("short_address")] public string ShortAddress { get; set; } = "";
     [JsonPropertyName("has_address")] public bool HasAddress { get; set; }
     [JsonPropertyName("routes")] public List<CardRoute> Routes { get; set; } = new();
+    /// <summary>
+    /// The route kinds the card named that the engine left out (internet, p2p): no key signs a
+    /// card's addresses, so release builds never read them (API.md, card.parse).
+    /// </summary>
+    [JsonPropertyName("ignored_routes")] public List<string>? IgnoredRoutes { get; set; }
+    /// <summary>The engine's own line about the routes it left out; null when it left none out.</summary>
+    [JsonPropertyName("note")] public string? Note { get; set; }
 }
 
 public sealed class WaitingInfo

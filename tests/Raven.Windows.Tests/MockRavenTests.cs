@@ -227,6 +227,34 @@ public sealed class MockRavenTests
     }
 
     [TestMethod]
+    public async Task Cards_InternetRoutesAreLeftOutWithANote_InRelease_AndReadInTheLab()
+    {
+        const string card = "RAVEN CARD v1\naddress=rvn1qcardfriendaddress0123456789abcdef\n" +
+            "lan=192.168.1.60:7420\ninet=198.51.100.7:7422\np2p=/ip4/198.51.100.7/tcp/7423\n";
+
+        (MockRaven release, _) = Ready(demo: false);
+        CardParsed left = await release.CardParseAsync(card);
+        CollectionAssert.AreEqual(new[] { "internet", "p2p" }, left.IgnoredRoutes!);
+        Assert.IsTrue(left.HasAddress, "the LAN address stays");
+        Assert.AreEqual("lan", left.Routes.Single().Kind);
+        StringAssert.Contains(left.Note!, "inet= and p2p=");
+        Assert.AreEqual(Loc.Get("add.paste.ignoredRoutes"), CardPresenter.IgnoredRoutesLine(left));
+        Assert.AreEqual(left.Note, CardPresenter.EngineNote(left));
+
+        CardParsed plain = await release.CardParseAsync("RAVEN CARD v1\naddress=rvn1qcardfriendaddress0123456789abcdef\n");
+        Assert.AreEqual(0, plain.IgnoredRoutes!.Count);
+        Assert.IsNull(plain.Note);
+        Assert.IsNull(CardPresenter.IgnoredRoutesLine(plain));
+        Assert.IsFalse(plain.HasAddress);
+
+        var lab = new MockRaven(ManualTimeProvider.StartingAt2026(), startReady: true, demoEvents: false, labNetwork: true);
+        CardParsed read = await lab.CardParseAsync(card);
+        CollectionAssert.AreEqual(new[] { "lan", "internet", "p2p" }, read.Routes.Select(r => r.Kind).ToArray());
+        Assert.AreEqual(0, read.IgnoredRoutes!.Count);
+        Assert.IsNull(CardPresenter.IgnoredRoutesLine(read));
+    }
+
+    [TestMethod]
     public async Task Settings_ChangeOnlyTheGivenFields()
     {
         (MockRaven engine, _) = Ready(demo: false);

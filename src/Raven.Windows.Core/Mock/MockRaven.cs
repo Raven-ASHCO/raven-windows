@@ -203,14 +203,40 @@ public sealed partial class MockRaven : IRavenEngine
             {
                 RequireReady();
                 ParsedCard card = ParseCard(ReqString(a, "text"));
+                // As the engine of version 0.1.0 (API.md, card.parse): a release build reads no
+                // Internet or peer-to-peer route from a card (nothing signs them) and says so in
+                // `note`; the lab mock reads them, as a debug build with RAVEN_LAB_TEST_A=1 does.
                 var routes = new JsonArray();
+                var ignored = new JsonArray();
+                var ignoredFields = new List<string>();
                 if (card.Lan is not null)
                 {
                     routes.Add(Obj(("kind", "lan"), ("label", LanPath), ("preview", false)));
                 }
-                routes.Add(Obj(("kind", "internet"), ("label", "Internet direct"), ("preview", true)));
-                var result = Obj(("short_address", ShortAddress(card.Address)), ("has_address", card.Lan is not null));
+                foreach ((bool named, string kind, string label, string field) in new[]
+                {
+                    (card.Internet, "internet", "Internet direct", "inet="),
+                    (card.P2p, "p2p", "Peer-to-peer and relays", "p2p="),
+                })
+                {
+                    if (!named) continue;
+                    if (_lab)
+                    {
+                        routes.Add(Obj(("kind", kind), ("label", label), ("preview", false)));
+                    }
+                    else
+                    {
+                        ignored.Add(kind);
+                        ignoredFields.Add(field);
+                    }
+                }
+                var result = Obj(("short_address", ShortAddress(card.Address)), ("has_address", routes.Count > 0));
                 result["routes"] = routes;
+                result["ignored_routes"] = ignored;
+                result["note"] = ignoredFields.Count == 0 ? null : JsonValue.Create(
+                    $"note: Raven ignored this card's {string.Join(" and ", ignoredFields)}: no key signs a card's addresses, " +
+                    "so Raven never dials one; your friend's addresses reach you inside your encrypted link once you are " +
+                    "connected (over Tor or the local network)");
                 return result;
             }
 
@@ -440,14 +466,19 @@ public sealed partial class MockRaven : IRavenEngine
         };
     }
 
-    private readonly record struct ParsedCard(string Address, string? Lan);
+    private readonly record struct ParsedCard(string Address, string? Lan, bool Internet = false, bool P2p = false);
 
-    /// <summary>Mock formats: "raven:&lt;address&gt;:&lt;pub_hex&gt;[@ip:port]" or the "RAVEN CARD" lines.</summary>
+    /// <summary>
+    /// Mock formats: "raven:&lt;address&gt;:&lt;pub_hex&gt;[@ip:port]" or the "RAVEN CARD" lines
+    /// (address=, lan=, and inet= / p2p= for the routes a release build leaves out).
+    /// </summary>
     private static ParsedCard ParseCard(string text)
     {
         string t = text.Trim();
         string? address = null;
         string? lan = null;
+        bool internet = false;
+        bool p2p = false;
 
         int invite = t.IndexOf("raven:", StringComparison.OrdinalIgnoreCase);
         if (invite >= 0)
@@ -468,6 +499,8 @@ public sealed partial class MockRaven : IRavenEngine
                 string line = raw.Trim();
                 if (line.StartsWith("address=", StringComparison.Ordinal)) address = line["address=".Length..];
                 else if (line.StartsWith("lan=", StringComparison.Ordinal)) lan = line["lan=".Length..];
+                else if (line.StartsWith("inet=", StringComparison.Ordinal) && line.Length > "inet=".Length) internet = true;
+                else if (line.StartsWith("p2p=", StringComparison.Ordinal) && line.Length > "p2p=".Length) p2p = true;
             }
         }
 
@@ -482,7 +515,7 @@ public sealed partial class MockRaven : IRavenEngine
                 "This is your own invite. Paste your friend's invite instead.", "card address equals this identity");
         }
         if (lan is not null && (lan.Length > 64 || !lan.Contains(':'))) lan = null;
-        return new ParsedCard(address, lan);
+        return new ParsedCard(address, lan, internet, p2p);
     }
 
     // ------------------------------------------------------------------ contacts and words

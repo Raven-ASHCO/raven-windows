@@ -4,6 +4,7 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Raven.Windows.Core.Engine;
+using Raven.Windows.Core.Presentation;
 using Raven.Windows.Core.Text;
 using Raven.Windows.Helpers;
 using Raven.Windows.Services;
@@ -16,7 +17,8 @@ namespace Raven.Windows.Dialogs;
 /// 1. Share: your invite (public information only) with Copy and an opt-in to include
 ///    your network address.
 /// 2. Paste: your friend's invite or card; once Raven reads it the box collapses to a
-///    one-line summary (click it to edit). Then the name you want to use.
+///    one-line summary (click it to edit), with a line when the engine left the card's
+///    internet or peer-to-peer routes out (card.parse "note"). Then the name you want to use.
 /// 3. Check words now, or later (the friend is saved as not verified).
 /// The friend's security words are never shown here.
 /// </summary>
@@ -44,6 +46,8 @@ public sealed class AddFriendDialog : ContentDialog
     private readonly TextBox _pasteBox = new();
     private readonly Button _summaryButton = new();
     private readonly TextBlock _summaryText;
+    private readonly TextBlock _ignoredText;
+    private readonly StackPanel _ignoredDetails = new();
     private readonly TextBlock _pasteError;
     private readonly StackPanel _namePanel = new() { Spacing = 6 };
     private readonly TextBox _nameBox = new();
@@ -106,6 +110,15 @@ public sealed class AddFriendDialog : ContentDialog
         _summaryButton.Visibility = Visibility.Collapsed;
         _summaryButton.Click += (_, _) => ExpandPaste();
         _pastePanel.Children.Add(_summaryButton);
+
+        // The card's internet or peer-to-peer routes the engine left out: a plain line, and the
+        // engine's own words under Technical details when those are shown.
+        _ignoredText = Ui.Text(string.Empty, "RavenSecondaryTextStyle");
+        _ignoredText.TextWrapping = TextWrapping.Wrap;
+        _ignoredText.Visibility = Visibility.Collapsed;
+        _pastePanel.Children.Add(_ignoredText);
+        _ignoredDetails.Visibility = Visibility.Collapsed;
+        _pastePanel.Children.Add(_ignoredDetails);
 
         _pasteError = Ui.Text(string.Empty, "RavenDangerTextStyle");
         _pasteError.Visibility = Visibility.Collapsed;
@@ -302,6 +315,7 @@ public sealed class AddFriendDialog : ContentDialog
                 : Loc.Format("add.paste.summaryNoAddress", ("short", parsed.ShortAddress));
             _pasteBox.Visibility = Visibility.Collapsed;
             _summaryButton.Visibility = Visibility.Visible;
+            ShowIgnoredRoutes(parsed);
             _namePanel.Visibility = Visibility.Visible;
             _nameBox.Focus(FocusState.Programmatic);
         }
@@ -309,6 +323,7 @@ public sealed class AddFriendDialog : ContentDialog
         {
             if (version != _parseVersion) return;
             _parsed = null;
+            ShowIgnoredRoutes(null);
             _pasteError.Text = ex.Message;
             _pasteError.Visibility = Visibility.Visible;
         }
@@ -319,9 +334,26 @@ public sealed class AddFriendDialog : ContentDialog
         UpdateButtons();
     }
 
+    /// <summary>The line about the card's routes the engine left out (none: hidden).</summary>
+    private void ShowIgnoredRoutes(CardParsed? parsed)
+    {
+        string? line = parsed is null ? null : CardPresenter.IgnoredRoutesLine(parsed);
+        _ignoredText.Text = line ?? string.Empty;
+        _ignoredText.Visibility = line is null ? Visibility.Collapsed : Visibility.Visible;
+        _ignoredDetails.Children.Clear();
+        if (line is not null && App.Current?.Prefs.ShowTechnical == true
+            && CardPresenter.EngineNote(parsed!) is string note
+            && Ui.TechnicalDetails(new[] { note }) is Expander details)
+        {
+            _ignoredDetails.Children.Add(details);
+        }
+        _ignoredDetails.Visibility = _ignoredDetails.Children.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     private void ExpandPaste()
     {
         _parsed = null;
+        ShowIgnoredRoutes(null);
         _summaryButton.Visibility = Visibility.Collapsed;
         _pasteBox.Visibility = Visibility.Visible;
         _namePanel.Visibility = Visibility.Collapsed;

@@ -41,6 +41,27 @@ public enum Tone
     Danger,
 }
 
+/// <summary>
+/// Add a friend, after card.parse: what to say when the engine left a card's internet or
+/// peer-to-peer routes out (release builds take no unsigned address from a card).
+/// </summary>
+public static class CardPresenter
+{
+    /// <summary>The plain line to show under the card's summary, or null when nothing was left out.</summary>
+    public static string? IgnoredRoutesLine(CardParsed parsed)
+        => LeftOut(parsed) ? Loc.Get("add.paste.ignoredRoutes") : null;
+
+    /// <summary>The engine's own line, for Technical details only (E1), or null.</summary>
+    public static string? EngineNote(CardParsed parsed)
+    {
+        string note = TextSanitizer.SingleLine(parsed.Note ?? string.Empty);
+        return note.Length > 0 ? note : null;
+    }
+
+    private static bool LeftOut(CardParsed parsed)
+        => (parsed.IgnoredRoutes?.Count ?? 0) > 0 || !string.IsNullOrWhiteSpace(parsed.Note);
+}
+
 /// <summary>How a friend appears in the sidebar.</summary>
 public static class ContactPresenter
 {
